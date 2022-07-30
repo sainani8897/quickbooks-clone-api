@@ -3,7 +3,10 @@ const { dbDatabase,dbHost,dbConnection,dbPort,dbUsername,dbPassword } = require(
 
 const connectDb = () => {
   //Set up default mongoose connection
-  var mongoDB = `${dbConnection}://${dbUsername+":"}${dbPassword}@${dbHost}:${dbPort}/${dbDatabase}?authMechanism=DEFAULT&authSource=admin`;
+  if(dbUsername!='')
+    var mongoDB = `${dbConnection}://${dbUsername+":"}${dbPassword}@${dbHost}:${dbPort}/${dbDatabase}?authMechanism=DEFAULT&authSource=admin`;
+  else
+    var mongoDB = `${dbConnection}://${dbHost}:${dbPort}/${dbDatabase}?authMechanism=DEFAULT&authSource=admin`;
   console.log(mongoDB);
   return mongoose.connect(mongoDB);
 };
