@@ -2,6 +2,16 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { UnauthorizedException } = require("../../exceptions");
 
+const AddressSchema = new mongoose.Schema({
+  address_line1: String,
+  address_line1: String,
+  city: String,
+  state:String,
+  pin:String,
+  country:String,
+  country_code:String
+});
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -32,29 +42,21 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    question1: {
-      type: String,
-      required: true,
+    email_verfied:{
+      type:Date
     },
-    answer1: {
-      type: String,
-      required: true,
+    phone_no_verfied:{
+      type:Date
     },
-    question2: {
-      type: String,
-      required: true,
+    address:{
+      type: AddressSchema,
     },
-    answer2: {
-      type: String,
-      required: true,
+    timezone:{
+      type:String
     },
-    question3: {
-      type: String,
-      required: true,
-    },
-    answer3: {
-      type: String,
-      required: true,
+    org_id:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
     },
     roles: [
       {
