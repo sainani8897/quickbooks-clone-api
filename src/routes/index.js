@@ -11,6 +11,7 @@ const authController = require("../controllers/auth.contoller");
 const mediaManager = require("../routes/mediaManager");
 const documents = require("./documents");
 const roles = require("./roles");
+const vendors = require("./vendor");
 const { profile, changePassword } = require("../controllers/user.controller");
 const permissions = require("../controllers/permissions.controller");
 /** Home Route */
@@ -57,6 +58,9 @@ Routes.use("/roles", authenticateToken, roles);
 
 /**Permissions Routes */
 Routes.get("/permissions", authenticateToken, permissions.index);
+
+Routes.use("/vendors", authenticateToken, vendors);
+
 
 
 module.exports = Routes;

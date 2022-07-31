@@ -1,7 +1,7 @@
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const { connectDb } = require("../../config/database");
-const { Permission, Role } = require("../Models");
+const { Permission, Role,Organization } = require("../Models");
 
 const seedUser = {
   name: "Admin",
@@ -58,20 +58,25 @@ const permissionSeeder = async () => {
 
   if (permissions) {
     superAdmin.permissions = permissions;
-     
+
+    const org = await Organization.findOneAndUpdate(
+      { name: "Decode Labs" },
+      { name: "Decode Labs", org_email: "admin@decodelabs.in" },
+      { upsert: true }
+    );
+
     const user = await User.findOneAndUpdate(
       { email: seedUser.email },
       seedUser,
       { upsert: true }
     );
     user.roles = [superAdmin._id];
+    user.org_id = org._id;
     await user.save();
   }
 
   return true;
 };
-
-async function userAdd(role) {}
 
 const seedDB = async () => {
   await connectDb();
