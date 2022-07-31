@@ -21,7 +21,7 @@ exports.index = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
     query.org_id = req.user.org_id;
-    console.log(query);
+    // console.log(query);
     const vendors = await Vendor.paginate(query, options);
     if (vendors.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: vendors });
