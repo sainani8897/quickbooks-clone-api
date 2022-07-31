@@ -128,7 +128,7 @@ exports.delete = async function (req, res, next) {
       },
       null
     );
-    console.log(vendor);
+    // console.log(vendor);
     if (vendor.length <= 0) {
       return res.send({
         status: 204,
