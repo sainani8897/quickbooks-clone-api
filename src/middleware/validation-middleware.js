@@ -183,8 +183,7 @@ exports.roleRules = (req, res, next) => {
   });
 };
 
-  // Customers
-  
+  // Customers  
   exports.myCustomers = (req, res, next) => {
     let validationRule = {
       "payload.name": "required",
@@ -202,38 +201,11 @@ exports.roleRules = (req, res, next) => {
       "payload.status"  : 'required|string'
       
     };
-exports.vendorRules = (req, res, next) => {
-  let validationRule = {
-    "payload.first_name": "required",
-    "payload.last_name": "required",
-    "payload.company_name": "required",
-    "payload.display_name": "required",
-    "payload.email": "required|email",
-    "payload.phone_number": "required",
-    "payload.address": "required",
-    "payload.address.address_line1": "required",
-    "payload.address.address_line2": "required",
-    "payload.address.city": "required",
-    "payload.address.state": "required",
-    "payload.address.pin": "required",
-    "payload.address.country": "required",
-  };
-
-  if (req.method == "PATCH") {
-    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
-  }
-
-  if (req.method == "DELETE") {
-    validationRule = {
-      _id: "required|array",
-    };
-  }
-
-  validator(req.body, validationRule, {}, (err, status) => {
-    if (!status) {
-      throw new ValidationException("Validation Failed", err);
-    } else {
-      next();
-    }
-  });
-};
+    validator(req.body, validationRule, {}, (err, status) => {
+      if (!status) {
+        throw new ValidationException("Validation Failed", err);
+      } else {
+        next();
+      }
+    });
+ };
