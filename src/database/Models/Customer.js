@@ -1,6 +1,16 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
+const AddressSchema = new mongoose.Schema({
+  address_line1: String,
+  address_line2: String,
+  city: String,
+  state: String,
+  pincode: String,
+  latitude: String,
+  longitude: String,
+});
+
 const customerSchema = new mongoose.Schema(
   {
     name: {
@@ -13,32 +23,17 @@ const customerSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
+      unique: true,
     },
     company_name: {
       type: String,
-      required: true,
     },
     company_email: {
       type: String,
     },
     address: {
-      type: String,
+      type: AddressSchema,
     },
-    city: {
-      type: String,
-    },
-    state: {
-      type: String,
-    },
-    pincode: {
-      type: Number,
-    },
-    latitude: {
-      type: Number,
-    },
-    longitude: {
-        type: Number,
-      },
     status: {
      type: String,
     },

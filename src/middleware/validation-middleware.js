@@ -183,7 +183,8 @@ exports.roleRules = (req, res, next) => {
   });
 };
 
-  // Customers  
+  // Customers
+  
   exports.myCustomers = (req, res, next) => {
     let validationRule = {
       "payload.name": "required",
@@ -191,16 +192,16 @@ exports.roleRules = (req, res, next) => {
       "payload.mobile": "required|numeric",     
       "payload.company_name":"string",
       "payload.company_email":"email",
-      "payload.address_line1":"required|string",
-      "payload.address_line2":"required|string",
-      "payload.city":"required|string",
-      "payload.state":"required|string",
-      "payload.pincode":'required|numeric',
-      "payload.latitude" :'required|numeric',
-      "payload.longitude"  :'required|numeric',
+      "payload.address.address_line1":"required|string",
+      "payload.address.address_line2":"required|string",
+      "payload.address.city":"required|string",
+      "payload.address.state":"required|string",
+      "payload.address.pincode":'required|numeric',
+      "payload.address.latitude" :'required|numeric',
+      "payload.address.longitude"  :'required|numeric',
       "payload.status"  : 'required|string'
-      
     };
+
     validator(req.body, validationRule, {}, (err, status) => {
       if (!status) {
         throw new ValidationException("Validation Failed", err);
@@ -208,4 +209,40 @@ exports.roleRules = (req, res, next) => {
         next();
       }
     });
- };
+};
+
+exports.vendorRules = (req, res, next) => {
+  let validationRule = {
+    "payload.first_name": "required",
+    "payload.last_name": "required",
+    "payload.company_name": "required",
+    "payload.display_name": "required",
+    "payload.email": "required|email",
+    "payload.phone_number": "required",
+    "payload.address": "required",
+    "payload.address.address_line1": "required",
+    "payload.address.address_line2": "required",
+    "payload.address.city": "required",
+    "payload.address.state": "required",
+    "payload.address.pin": "required",
+    "payload.address.country": "required",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};

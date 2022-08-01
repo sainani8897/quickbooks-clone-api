@@ -6,12 +6,14 @@ const {myCustomers} = require('../middleware/validation-middleware');
  */
 let router = express.Router()
 
-// router.get('/', customerController.index);
+router.get('/', customerController.index);
 
 router.post('/', myCustomers, customerController.create);
 
-// router.get('/:id', customerController.show);
+router.get('/:id', customerController.show);
 
-// router.patch('/', customerController.update);
+router.patch('/', customerController.update);
+
+router.delete("/", customerController.delete);
 
 module.exports = router
