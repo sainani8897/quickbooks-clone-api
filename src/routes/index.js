@@ -13,6 +13,7 @@ const authController = require("../controllers/auth.contoller");
 const mediaManager = require("../routes/mediaManager");
 const documents = require("./documents");
 const roles = require("./roles");
+const vendors = require("./vendor");
 const { profile, changePassword } = require("../controllers/user.controller");
 const permissions = require("../controllers/permissions.controller");
 // const customer=require("..routes/customer");
@@ -64,5 +65,8 @@ Routes.get("/permissions", authenticateToken, permissions.index);
 /** Customers Routes */
 
 Routes.use("/customers", authenticateToken, customer);
+Routes.use("/vendors", authenticateToken, vendors);
+
+
 
 module.exports = Routes;

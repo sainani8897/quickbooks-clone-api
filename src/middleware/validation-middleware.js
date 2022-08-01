@@ -5,15 +5,15 @@ exports.signup = (req, res, next) => {
   const validationRule = {
     email: "required|email",
     first_name: "required|string",
-    last_name:'required|string',
+    last_name: "required|string",
     password: "required|string|min:6|confirmed",
-    question1:"required|string",
-    answer1:"required|string",
-    question2:"required|string",
-    answer2:"required|string",
-    question3:"required|string",
-    answer3:"required|string",
-    phone_number:'required|numeric'
+    question1: "required|string",
+    answer1: "required|string",
+    question2: "required|string",
+    answer2: "required|string",
+    question3: "required|string",
+    answer3: "required|string",
+    phone_number: "required|numeric",
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
@@ -202,6 +202,33 @@ exports.roleRules = (req, res, next) => {
       "payload.status"  : 'required|string'
       
     };
+exports.vendorRules = (req, res, next) => {
+  let validationRule = {
+    "payload.first_name": "required",
+    "payload.last_name": "required",
+    "payload.company_name": "required",
+    "payload.display_name": "required",
+    "payload.email": "required|email",
+    "payload.phone_number": "required",
+    "payload.address": "required",
+    "payload.address.address_line1": "required",
+    "payload.address.address_line2": "required",
+    "payload.address.city": "required",
+    "payload.address.state": "required",
+    "payload.address.pin": "required",
+    "payload.address.country": "required",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
       throw new ValidationException("Validation Failed", err);
@@ -210,4 +237,3 @@ exports.roleRules = (req, res, next) => {
     }
   });
 };
-

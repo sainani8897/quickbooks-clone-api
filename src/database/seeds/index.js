@@ -1,51 +1,52 @@
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const { connectDb } = require("../../config/database");
-const { Permission, Role } = require("../Models");
+const { Permission, Role,Organization } = require("../Models");
 
 const seedUser = {
   name: "Admin",
   email: "admin@gmail.com",
+  first_name: "Super",
+  last_name: "Owner",
+  phone_number: "9000152046",
   password: bcrypt.hashSync("Admin@123", 10),
 };
 
 const permissionSeed = [
-  "create_docs",
-  "read_docs",
-  "update_docs",
-  "delete_docs",
-  "create_media",
-  "read_media",
-  "update_media",
-  "delete_media",
-  "create_media",
-  "read_media",
-  "update_media",
-  "delete_media",
-  "create_investments",
-  "read_investments",
-  "update_investments",
-  "delete_investments",
-  "create_property",
-  "read_property",
-  "update_property",
-  "delete_property",
+  {
+    name: "create_docs",
+    display_text: "Create Docs",
+  },
+  {
+    name: "read_docs",
+    display_text: "Read Docs",
+  },
+  {
+    name: "update_docs",
+    display_text: "Update Docs",
+  },
+  {
+    name: "delete_docs",
+    display_text: "Delete Docs",
+  },
+  {
+    name: "create_media",
+    display_text: "Create Media",
+  },
+  {
+    name: "update_media",
+    display_text: "Update Media",
+  },
+  {
+    name: "delete_media",
+    display_text: "Delete Media",
+  },
 ];
 
 const permissionSeeder = async () => {
-  const permissions = [];
-  permissionSeed.forEach(async (element) => {
-    let res = await Permission.findOneAndUpdate(
-      { name: element },
-      {
-        name: element,
-        display_text: element.toLocaleUpperCase(),
-      },
-      { upsert: true }
-    );
-
-    permissions.push(res);
-  });
+  await Permission.deleteMany({});
+  await Permission.insertMany(permissionSeed);
+  // console.log(permissions);
 
   const superAdmin = await Role.findOneAndUpdate(
     { name: "super_admin" },
@@ -53,25 +54,36 @@ const permissionSeeder = async () => {
     { upsert: true }
   );
 
-  superAdmin.permissions = permissions;
-  superAdmin.save();
+  const permissions = await Permission.find({});
 
-  return superAdmin;
+  if (permissions) {
+    superAdmin.permissions = permissions;
+
+    const org = await Organization.findOneAndUpdate(
+      { name: "Decode Labs" },
+      { name: "Decode Labs", org_email: "admin@decodelabs.in" },
+      { upsert: true }
+    );
+
+    const user = await User.findOneAndUpdate(
+      { email: seedUser.email },
+      seedUser,
+      { upsert: true }
+    );
+    user.roles = [superAdmin._id];
+    user.org_id = org._id;
+    await user.save();
+  }
+
+  return true;
 };
 
 const seedDB = async () => {
   await connectDb();
   const role = await permissionSeeder();
-  const user = await User.findOneAndUpdate(
-    { email: seedUser.email },
-    seedUser,
-    { upsert: true }
-  );
-  user.roles = [role._id];
-  user.save();
 };
 
 seedDB().then(() => {
   console.log("Database seed completed");
-  process.exit()
+  process.exit();
 });

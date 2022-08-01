@@ -1,26 +1,25 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { UnauthorizedException } = require("../../exceptions");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const AddressSchema = new mongoose.Schema({
   address_line1: String,
-  address_line1: String,
+  address_line2: String,
   city: String,
-  state:String,
-  pin:String,
-  country:String,
-  country_code:String
+  state: String,
+  pin: String,
+  country: String,
+  country_code: String,
+  latitude: String,
+  longitude: String,
 });
 
-const userSchema = new mongoose.Schema(
+const VendorSchema = new mongoose.Schema(
   {
     email: {
       type: String,
       unique: true,
-      required: true,
-    },
-    password: {
-      type: String,
     },
     first_name: {
       type: String,
@@ -30,54 +29,52 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    name: {
+    display_name: {
       type: String,
       required: true,
     },
-    tokens: {
-      type: Array,
+    company_name: {
+      type: String,
+      required: true,
     },
     phone_number: {
       type: String,
-      required: true,
       unique: true,
     },
-    email_verfied:{
-      type:Date
+    email_verfied: {
+      type: Date,
     },
-    phone_no_verfied:{
-      type:Date
+    phone_no_verfied: {
+      type: Date,
     },
-    address:{
+    address: {
       type: AddressSchema,
     },
-    timezone:{
-      type:String
+    timezone: {
+      type: String,
     },
-    org_id:{
+    org_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
     },
-    roles: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
-      },
-    ],
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true },
   {
     toJSON: {
       transform(doc, ret) {
-        delete ret.password;
         delete ret.__v;
-        delete ret.tokens;
       },
     },
   }
 );
 
-userSchema.statics.findByLogin = async function ({ email, password }) {
+VendorSchema.plugin(mongoosePaginate);
+
+VendorSchema.statics.findByLogin = async function ({ email, password }) {
   let user = await this.findOne({
     email,
   });
@@ -94,13 +91,13 @@ userSchema.statics.findByLogin = async function ({ email, password }) {
   );
 };
 
-userSchema.statics.register = async function (register) {
+VendorSchema.statics.register = async function (register) {
   return await this.create(register, function (err, userInstance) {
     if (err) throw new Error("BROKEN");
     return userInstance;
   });
 };
 
-const User = mongoose.model("User", userSchema);
+const Vendor = mongoose.model("Vendor", VendorSchema);
 
-module.exports = User;
+module.exports = Vendor;
