@@ -63,10 +63,10 @@ Routes.use("/roles", authenticateToken, roles);
 Routes.get("/permissions", authenticateToken, permissions.index);
 
 /** Customers Routes */
-
 Routes.use("/customers", authenticateToken, customer);
+
 Routes.use("/vendors", authenticateToken, vendors);
 
-
+/** Categories Routes */
 
 module.exports = Routes;
