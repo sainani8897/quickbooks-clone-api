@@ -7,12 +7,15 @@ const validationMiddleware = require("../middleware/validation-middleware");
 const users = require("./users");
 const myinvestments = require("./myinvestments");
 const investor = require("./investor");
+const customer = require("./customer");
+
 const authController = require("../controllers/auth.contoller");
 const mediaManager = require("../routes/mediaManager");
 const documents = require("./documents");
 const roles = require("./roles");
 const { profile, changePassword } = require("../controllers/user.controller");
 const permissions = require("../controllers/permissions.controller");
+// const customer=require("..routes/customer");
 /** Home Route */
 Routes.get("/", function (req, res) {
   res.send("Home api page");
@@ -58,5 +61,8 @@ Routes.use("/roles", authenticateToken, roles);
 /**Permissions Routes */
 Routes.get("/permissions", authenticateToken, permissions.index);
 
+/** Customers Routes */
+
+Routes.use("/customers", authenticateToken, customer);
 
 module.exports = Routes;

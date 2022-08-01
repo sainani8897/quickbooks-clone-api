@@ -182,3 +182,32 @@ exports.roleRules = (req, res, next) => {
     }
   });
 };
+
+  // Customers
+  
+  exports.myCustomers = (req, res, next) => {
+    let validationRule = {
+      "payload.name": "required",
+      "payload.email": "required|email",
+      "payload.mobile": "required|numeric",     
+      "payload.company_name":"string",
+      "payload.company_email":"email",
+      "payload.address_line1":"required|string",
+      "payload.address_line2":"required|string",
+      "payload.city":"required|string",
+      "payload.state":"required|string",
+      "payload.pincode":'required|numeric',
+      "payload.latitude" :'required|numeric',
+      "payload.longitude"  :'required|numeric',
+      "payload.status"  : 'required|string'
+      
+    };
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
