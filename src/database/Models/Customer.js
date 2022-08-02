@@ -35,7 +35,11 @@ const customerSchema = new mongoose.Schema(
       type: AddressSchema,
     },
     status: {
-     type: String,
+      type: String,
+    },
+    org_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
     },
   },
   { timestamps: true },
@@ -52,7 +56,7 @@ const customerSchema = new mongoose.Schema(
  * Pagination
  */
 
- customerSchema.plugin(mongoosePaginate);
+customerSchema.plugin(mongoosePaginate);
 
 const Customer = mongoose.model("Customer", customerSchema);
 
