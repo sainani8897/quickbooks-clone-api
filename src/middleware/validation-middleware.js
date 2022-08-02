@@ -211,6 +211,44 @@ exports.roleRules = (req, res, next) => {
     });
 };
 
+// Category validation rules
+
+exports.myCategories = (req, res, next) => {
+  let validationRule = {
+    "payload.category_name": "required|string",
+    "payload.slug": "required|string",
+    "payload.sort": "required|numeric",    
+    "payload.status"  : "required|string"
+  };
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
+// Tax validation rules
+
+exports.myTaxes = (req, res, next) => {
+  let validationRule = {
+    "payload.title": "required|string",
+    "payload.type": "required|in:percentage,amount",
+    "payload.value": "required|numeric",    
+    "payload.status"  : "required|string"
+  };
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
 exports.vendorRules = (req, res, next) => {
   let validationRule = {
     "payload.first_name": "required",

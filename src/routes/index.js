@@ -16,7 +16,8 @@ const roles = require("./roles");
 const vendors = require("./vendor");
 const { profile, changePassword } = require("../controllers/user.controller");
 const permissions = require("../controllers/permissions.controller");
-// const customer=require("..routes/customer");
+const category = require("./category");
+const tax = require("./tax");
 /** Home Route */
 Routes.get("/", function (req, res) {
   res.send("Home api page");
@@ -68,5 +69,11 @@ Routes.use("/customers", authenticateToken, customer);
 Routes.use("/vendors", authenticateToken, vendors);
 
 /** Categories Routes */
+Routes.use("/categories", authenticateToken, category);
+
+/** Tax Routes */
+Routes.use("/taxes", authenticateToken, tax);
+
+
 
 module.exports = Routes;
