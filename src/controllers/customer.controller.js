@@ -3,11 +3,9 @@ const { NotFoundException } = require("../exceptions");
 
 //Customers List
 exports.index = async function (req, res, next) {
-
-  try
-  {
-     /** Pagination obj  */
-     const options = {
+  try {
+    /** Pagination obj  */
+    const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { date: -1 },
@@ -23,16 +21,14 @@ exports.index = async function (req, res, next) {
     }
     const customers = await Customer.paginate(query, options);
     if (customers.totalDocs > 0)
-    return res.send({ status: 200, message: "Data found", data: customers });
-  else
-    return res.send({
-      status: 204,
-      message: "No Content found",
-      data: customers,
-    });
-  }
-  catch(error)
-  {
+      return res.send({ status: 200, message: "Data found", data: customers });
+    else
+      return res.send({
+        status: 204,
+        message: "No Content found",
+        data: customers,
+      });
+  } catch (error) {
     next(error);
   }
 };
@@ -50,27 +46,28 @@ exports.show = async function (req, res, next) {
 };
 
 exports.create = async function (req, res, next) {
-    try {
-      /** Basic Form */
-       const payload = req.body.payload;
-       console.log(req.body.payload);
-        const customer = await Customer.create({
-          name : payload.name,
-          email : payload.email,
-          mobile : payload.mobile,
-          company_name : payload.company_name,
-          company_email : payload.company_email,
-          address : payload.address,
-          status : payload.status,
-        });    
+  try {
+    /** Basic Form */
+    const payload = req.body.payload;
+    // console.log(req.body.payload);
+    const customer = await Customer.create({
+      name: payload.name,
+      email: payload.email,
+      mobile: payload.mobile,
+      company_name: payload.company_name,
+      company_email: payload.company_email,
+      address: payload.address,
+      status: payload.status,
+      org_id:req.user.org_id
+    });
 
-        return res.send({
-          status: 200,
-          message: "Created Successfully",
-        });
-    } catch (error) {
-      next(error);
-    }
+    return res.send({
+      status: 200,
+      message: "Created Successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 //Update Customer
@@ -98,6 +95,7 @@ exports.update = async function (req, res, next) {
       company_email: payload.company_email,
       address: payload.address,
       status: payload.status,
+      org_id:req.user.org_id
     });
 
     return res.send({
