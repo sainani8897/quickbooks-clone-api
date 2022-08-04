@@ -11,6 +11,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { date: -1 },
+      populate: ["icon"],
     };
 
     const query = req.query;
@@ -60,8 +61,20 @@ exports.create = async function (req, res, next) {
           parent_id : payload.parent_id ?? null,
           sort : payload.sort,
           status : payload.status,
+          icon : payload.icon ?? null,
           org_id : req.user.org_id
-        });    
+        });
+        
+        if (Array.isArray(payload.files)) {
+          /** Files */
+          payload.files.forEach((file) => {
+            category.files.push(file);
+          });
+    
+          (await category).save();
+        }
+
+        //category.icon = payload.icon
 
         return res.send({
           status: 200,
@@ -93,7 +106,20 @@ exports.update = async function (req, res, next) {
       parent_id: payload.parent_id,
       sort: payload.sort,
       status: payload.status,
+      icon : payload.icon
     });
+
+      /** Delete  */
+      if (Array.isArray(payload.files)) {
+        /** Files */
+        payload.files.forEach((file) => {
+          category.files.push(file);
+        });
+  
+        (await category).save();
+      }
+
+      // category.icon = payload.icon
 
     return res.send({
       status: 200,

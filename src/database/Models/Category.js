@@ -22,6 +22,10 @@ const categorySchema = new mongoose.Schema(
     status: {
      type: String,
     },
+    icon: {
+      type: mongoose.Schema.Types.ObjectId,
+        ref: "MediaManager",
+     },
     org_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Organization",

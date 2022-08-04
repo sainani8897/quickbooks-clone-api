@@ -70,6 +70,7 @@ exports.create = async function (req, res, next) {
     return res.send({
       status: 200,
       message: "Created Successfully",
+      data: media_manager
     });
   } catch (error) {
     next(error);
