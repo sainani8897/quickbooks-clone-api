@@ -64,16 +64,6 @@ exports.create = async function (req, res, next) {
           icon : payload.icon ?? null,
           org_id : req.user.org_id
         });
-        
-        if (Array.isArray(payload.files)) {
-          /** Files */
-          payload.files.forEach((file) => {
-            category.files.push(file);
-          });
-    
-          (await category).save();
-        }
-
         //category.icon = payload.icon
 
         return res.send({
@@ -108,16 +98,6 @@ exports.update = async function (req, res, next) {
       status: payload.status,
       icon : payload.icon
     });
-
-      /** Delete  */
-      if (Array.isArray(payload.files)) {
-        /** Files */
-        payload.files.forEach((file) => {
-          category.files.push(file);
-        });
-  
-        (await category).save();
-      }
 
       // category.icon = payload.icon
 
