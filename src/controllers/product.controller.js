@@ -119,7 +119,15 @@ exports.update = async function (req, res, next) {
       description : payload.description ?? null,
     });
 
-      // category.icon = payload.icon
+      /** Delete  */
+      if (Array.isArray(payload.files)) {
+        /** Files */
+        payload.files.forEach((file) => {
+          document.files.push(file);
+        });
+  
+        (await document).save();
+      }
 
     return res.send({
       status: 200,
