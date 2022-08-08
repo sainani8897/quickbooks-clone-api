@@ -249,6 +249,38 @@ exports.myTaxes = (req, res, next) => {
   });
 };
 
+
+exports.myProducts = (req, res, next) => {
+
+  let validationRule = {
+    "payload.name": "required|string",
+    "payload.slug": "required|string",
+    "payload.sku": "required|string",
+    "payload.serial_number": "required|numeric",
+    "payload.qty": "required|numeric",
+    "payload.cost": "required|numeric",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+  
+};
+
 exports.vendorRules = (req, res, next) => {
   let validationRule = {
     "payload.first_name": "required",
@@ -284,3 +316,6 @@ exports.vendorRules = (req, res, next) => {
     }
   });
 };
+
+
+

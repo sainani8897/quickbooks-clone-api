@@ -18,6 +18,7 @@ const { profile, changePassword } = require("../controllers/user.controller");
 const permissions = require("../controllers/permissions.controller");
 const category = require("./category");
 const tax = require("./tax");
+const product = require("./product");
 /** Home Route */
 Routes.get("/", function (req, res) {
   res.send("Home api page");
@@ -73,6 +74,9 @@ Routes.use("/categories", authenticateToken, category);
 
 /** Tax Routes */
 Routes.use("/taxes", authenticateToken, tax);
+
+/** Tax Routes */
+Routes.use("/products", authenticateToken, product);
 
 
 
