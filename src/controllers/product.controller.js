@@ -54,10 +54,12 @@ exports.create = async function (req, res, next) {
     try {
       /** Basic Form */
        const payload = req.body.payload;
-       console.log(req.body.payload);
+      //  console.log(req.body.payload);
+
+       const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g,'-');
         const product = await Product.create({
           name : payload.name,
-          slug : payload.slug,
+          slug : slug,
           sku : payload.sku,
           serial_number : payload.serial_number,
           vendor_id : payload.vendor_id,

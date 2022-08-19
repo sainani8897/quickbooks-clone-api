@@ -14,6 +14,6 @@ router.get('/:id', categoryController.show);
 
 router.patch('/', categoryController.update);
 
-router.delete("/", categoryController.delete);
+router.delete("/", myCategories, categoryController.delete);
 
 module.exports = router

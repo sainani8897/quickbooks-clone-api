@@ -57,7 +57,7 @@ exports.create = async function (req, res, next) {
        console.log(req.body.payload);
         const category = await Category.create({
           category_name : payload.category_name,
-          slug : payload.slug,
+          slug : payload.category_name,
           parent_id : payload.parent_id ?? null,
           sort : payload.sort,
           status : payload.status,

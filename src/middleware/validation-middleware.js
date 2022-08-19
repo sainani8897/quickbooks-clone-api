@@ -216,10 +216,15 @@ exports.roleRules = (req, res, next) => {
 exports.myCategories = (req, res, next) => {
   let validationRule = {
     "payload.category_name": "required|string",
-    "payload.slug": "required|string",
     "payload.sort": "required|numeric",    
     "payload.status"  : "required|string"
   };
+  
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
@@ -254,7 +259,6 @@ exports.myProducts = (req, res, next) => {
 
   let validationRule = {
     "payload.name": "required|string",
-    "payload.slug": "required|string",
     "payload.sku": "required|string",
     "payload.serial_number": "required|numeric",
     "payload.qty": "required|numeric",
