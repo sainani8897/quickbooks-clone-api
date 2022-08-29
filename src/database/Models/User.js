@@ -80,7 +80,7 @@ const userSchema = new mongoose.Schema(
 userSchema.statics.findByLogin = async function ({ email, password }) {
   let user = await this.findOne({
     email,
-  });
+  }).select([-password]);
 
   if (user) {
     const match = await bcrypt.compare(password, user.password);

@@ -19,7 +19,7 @@ exports.login = async function (req, res, next) {
       });
       res
         .status(200)
-        .json({ _id: user._id, name: user.name, email: user.email, token });
+        .json({ _id: user._id, name: user.name, email: user.email, token,user });
     })
     .catch((err) => {
       next(err);
