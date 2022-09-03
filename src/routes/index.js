@@ -33,6 +33,9 @@ Routes.post("/register", validationMiddleware.signup, authController.register);
 /**Logout Route */
 Routes.post("/logout", authenticateToken, authController.logout);
 
+/* Refresh token  */
+Routes.post("/refresh", authController.refreshToken);
+
 /** Routes Users  */
 Routes.use("/users", authenticateToken, users);
 

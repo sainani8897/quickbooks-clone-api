@@ -7,7 +7,13 @@ const { connectDb } = require("./config/database");
 const cors = require("cors");
 
 /** CROS */
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+}));
+
+
 
 /** Body Parser */
 app.use(express.json()); // for parsing application/json

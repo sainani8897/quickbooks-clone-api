@@ -34,8 +34,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tokens: {
-      type: Array,
+    tokens: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PersonalAccessTokens",
+      },
+    ],
+    refresh_token: {
+      type: String,
     },
     phone_number: {
       type: String,
@@ -71,7 +77,7 @@ const userSchema = new mongoose.Schema(
       transform(doc, ret) {
         delete ret.password;
         delete ret.__v;
-        delete ret.tokens;
+        delete ret.refresh_token;
       },
     },
   }
