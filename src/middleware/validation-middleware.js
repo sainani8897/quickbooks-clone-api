@@ -187,18 +187,19 @@ exports.roleRules = (req, res, next) => {
   
   exports.myCustomers = (req, res, next) => {
     let validationRule = {
-      "payload.name": "required",
+      "payload.first_name": "required",
+      "payload.last_name": "required",
       "payload.email": "required|email",
       "payload.mobile": "required|numeric",     
-      "payload.company_name":"string",
-      "payload.company_email":"email",
-      "payload.address.address_line1":"required|string",
-      "payload.address.address_line2":"required|string",
-      "payload.address.city":"required|string",
-      "payload.address.state":"required|string",
-      "payload.address.pincode":'required|numeric',
-      "payload.address.latitude" :'required|numeric',
-      "payload.address.longitude"  :'required|numeric',
+      // "payload.company_name":"string",
+      // "payload.company_email":"email",
+      // "payload.address.address_line1":"required|string",
+      // "payload.address.address_line2":"required|string",
+      // "payload.address.city":"required|string",
+      // "payload.address.state":"required|string",
+      // "payload.address.pincode":'required|numeric',
+      // "payload.address.latitude" :'required|numeric',
+      // "payload.address.longitude"  :'required|numeric',
       "payload.status"  : 'required|string'
     };
 

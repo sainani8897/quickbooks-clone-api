@@ -11,11 +11,34 @@ const AddressSchema = new mongoose.Schema({
   longitude: String,
 });
 
+
+const SocialSchema = new mongoose.Schema({
+  whatsapp: String,
+  instagram: String,
+  twitter: String,
+  facebook: String,
+  website_url: String,
+});
+
 const customerSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+    },
+    first_name: {
+      type: String,
+      required: true,
+    },
+    last_name: {
+      type: String,
+      required: true,
+    },
+    customer_type: {
+      type: String
+    },
+    saluation: {
+      type: String
     },
     email: {
       type: String,
@@ -31,12 +54,44 @@ const customerSchema = new mongoose.Schema(
     company_email: {
       type: String,
     },
+    company_phone: {
+      type: String,
+    },
+    alt_phone: {
+      type: String
+    },
+    alt_email: {
+      type: String
+    },
+    display_name: {
+      type: String,
+    },
     address: {
+      type: AddressSchema,
+    },
+    billing_address: {
+      type: AddressSchema,
+    },
+    shiping_address: {
       type: AddressSchema,
     },
     status: {
       type: String,
     },
+    pan: {
+      type: String
+    },
+    gst: {
+      type: String
+    },
+    profile: {
+      type: String
+    },
+    social_info: {
+      type: SocialSchema,
+    },
+    notes: String,
+    contacts: [mongoose.Schema.Types.Mixed],
     org_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",

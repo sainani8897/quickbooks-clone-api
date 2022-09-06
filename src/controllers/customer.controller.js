@@ -8,7 +8,7 @@ exports.index = async function (req, res, next) {
     const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
-      sort: { date: -1 },
+      sort: { createdAt: -1 },
       // populate: ["files", "created_by"],
     };
 
@@ -51,11 +51,30 @@ exports.create = async function (req, res, next) {
     const payload = req.body.payload;
     // console.log(req.body.payload);
     const customer = await Customer.create({
-      name: payload.name,
+      first_name: payload.first_name,
+      last_name:payload.last_name,
+      saluation:payload.saluation,
+      customer_type:payload.customer_type,
+      name: payload.first_name+' '+payload.last_name,
+      display_name: payload.display_name,
       email: payload.email,
       mobile: payload.mobile,
       company_name: payload.company_name,
       company_email: payload.company_email,
+      company_phone: payload.company_phone,
+      alt_phone: payload.alt_phone,
+      alt_email: payload.alt_email,
+      pan: payload.pan,
+      gst: payload.gst,
+      contacts: payload.contacts,
+      // profile: payload.profile,
+      social_info:{
+        whatsapp: payload.whatsapp,
+        instagram: payload.instagram,
+        twitter: payload.twitter,
+        facebook: payload.facebook,
+        website_url: payload.website_url,
+      },
       address: payload.address,
       status: payload.status,
       org_id:req.user.org_id
@@ -87,13 +106,33 @@ exports.update = async function (req, res, next) {
       return res.send({ status: 404, message: "No data found", data: {} });
 
     const result = await customer.update({
-      name: payload.name,
+      first_name: payload.first_name,
+      last_name:payload.last_name,
+      saluation:payload.saluation,
+      customer_type:payload.customer_type,
+      name: payload.first_name+' '+payload.last_name,
+      display_name: payload.display_name,
       email: payload.email,
       mobile: payload.mobile,
-      email: payload.email,
       company_name: payload.company_name,
       company_email: payload.company_email,
+      company_phone: payload.company_phone,
+      alt_phone: payload.alt_phone,
+      alt_email: payload.alt_email,
+      pan: payload.pan,
+      gst: payload.gst,
+      contacts: payload.contacts,
+      notes:payload.notes,
+      // profile: payload.profile,
+      social_info:{
+        whatsapp: payload.whatsapp,
+        instagram: payload.instagram,
+        twitter: payload.twitter,
+        facebook: payload.facebook,
+        website_url: payload.website_url,
+      },
       address: payload.address,
+      shiping_address: payload.shiping_address,
       status: payload.status,
       org_id:req.user.org_id
     });
