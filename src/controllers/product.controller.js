@@ -3,14 +3,13 @@ const { NotFoundException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
 
-  try
-  {
-     /** Pagination obj  */
-     const options = {
+  try {
+    /** Pagination obj  */
+    const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { date: -1 },
-      populate:['created_by']
+      populate: ['created_by']
     };
 
     const query = req.query;
@@ -22,16 +21,15 @@ exports.index = async function (req, res, next) {
     }
     const products = await Product.paginate(query, options);
     if (products.totalDocs > 0)
-    return res.send({ status: 200, message: "Data found", data: products });
-  else
-    return res.send({
-      status: 204,
-      message: "No Content found",
-      data: products,
-    });
+      return res.send({ status: 200, message: "Data found", data: products });
+    else
+      return res.send({
+        status: 204,
+        message: "No Content found",
+        data: products,
+      });
   }
-  catch(error)
-  {
+  catch (error) {
     next(error);
   }
 };
@@ -51,44 +49,60 @@ exports.show = async function (req, res, next) {
 
 
 exports.create = async function (req, res, next) {
-    try {
-      /** Basic Form */
-       const payload = req.body.payload;
-      //  console.log(req.body.payload);
+  try {
+    /** Basic Form */
+    const payload = req.body.payload;
+    //  console.log(req.body.payload);
 
-       const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g,'-');
-        const product = await Product.create({
-          name : payload.name,
-          slug : slug,
-          sku : payload.sku,
-          serial_number : payload.serial_number,
-          vendor_id : payload.vendor_id,
-          units_of_measurement : payload.units_of_measurement ?? null,
-          qty : payload.qty,
-          purchased_price : payload.purchased_price ?? null,
-          cost : payload.cost,
-          sell_price : payload.sell_price ?? null,
-          status : payload.status,
-          description : payload.description ?? null,
-          created_by: req.user._id,
-          org_id : req.user.org_id
-        });
-        if (Array.isArray(payload.files)) {
-            /** Files */
-            payload.files.forEach((file) => {
-                product.files.push(file);
-            });
-      
-            (await product).save();
-          }
-          
-        return res.send({
-          status: 200,
-          message: "Created Successfully",
-        });
-    } catch (error) {
-      next(error);
+    const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
+    const product = await Product.create({
+      name: payload.name,
+      slug: slug,
+      sku: payload.sku,
+      serial_number: payload.serial_number,
+      type: payload.type,
+      track_inventory: Boolean(payload.track_inventory) ?? false,
+      vendor_id: payload.vendor_id,
+      brand: payload.brand ?? null,
+      category_id: payload.category_id ?? null,
+      dimension_unit: payload.dimension_unit ?? null,
+      ean: payload.ean ?? null,
+      height: payload.height ?? null,
+      isbn: payload.isbn ?? null,
+      length: payload.length ?? null,
+      manufacturer: payload.manufacturer ?? null,
+      serial_number: payload.serial_number ?? null,
+      upc: payload.upc ?? null,
+      weight_unit: payload.weight_unit ?? null,
+      width: payload.width ?? null,
+      units_of_measurement: payload.units_of_measurement ?? null,
+      is_returnable: Boolean(payload.is_returnable) ?? false,
+      units_of_measurement: payload.units_of_measurement ?? null,
+      qty: payload.qty,
+      purchased_price: payload.purchased_price ?? null,
+      cost: payload.cost,
+      sell_price: payload.sell_price ?? null,
+      status: payload.status,
+      description: payload.description ?? null,
+      created_by: req.user._id,
+      org_id: req.user.org_id
+    });
+    if (Array.isArray(payload.files)) {
+      /** Files */
+      payload.files.forEach((file) => {
+        product.files.push(file);
+      });
+
+      (await product).save();
     }
+
+    return res.send({
+      status: 200,
+      message: "Created Successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 
@@ -105,31 +119,49 @@ exports.update = async function (req, res, next) {
     var product = await Product.findById({ _id });
     if (!product)
       return res.send({ status: 404, message: "No data found", data: {} });
-
+    const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
     const result = await product.update({
-      name : payload.name,
-      slug : payload.slug,
-      sku : payload.sku,
-      serial_number : payload.serial_number,
-      vendor_id : payload.vendor_id,
-      units_of_measurement : payload.units_of_measurement ?? null,
-      qty : payload.qty,
-      purchased_price : payload.purchased_price ?? null,
-      cost : payload.cost,
-      sell_price : payload.sell_price ?? null,
-      status : payload.status,
-      description : payload.description ?? null,
+      name: payload.name,
+      slug: slug,
+      sku: payload.sku,
+      serial_number: payload.serial_number,
+      type: payload.type,
+      track_inventory: Boolean(payload.track_inventory) ?? false,
+      vendor_id: payload.vendor_id,
+      brand: payload.brand ?? null,
+      category_id: payload.category_id ?? null,
+      dimension_unit: payload.dimension_unit ?? null,
+      ean: payload.ean ?? null,
+      height: payload.height ?? null,
+      isbn: payload.isbn ?? null,
+      length: payload.length ?? null,
+      manufacturer: payload.manufacturer ?? null,
+      serial_number: payload.serial_number ?? null,
+      upc: payload.upc ?? null,
+      weight_unit: payload.weight_unit ?? null,
+      width: payload.width ?? null,
+      units_of_measurement: payload.units_of_measurement ?? null,
+      is_returnable: Boolean(payload.is_returnable) ?? false,
+      units_of_measurement: payload.units_of_measurement ?? null,
+      qty: payload.qty,
+      purchased_price: payload.purchased_price ?? null,
+      cost: payload.cost,
+      sell_price: payload.sell_price ?? null,
+      status: payload.status,
+      description: payload.description ?? null,
+      created_by: req.user._id,
+      org_id: req.user.org_id
     });
 
-      /** Delete  */
-      if (Array.isArray(payload.files)) {
-        /** Files */
-        payload.files.forEach((file) => {
-          document.files.push(file);
-        });
-  
-        (await document).save();
-      }
+    /** Delete  */
+    if (Array.isArray(payload.files)) {
+      /** Files */
+      payload.files.forEach((file) => {
+        document.files.push(file);
+      });
+
+      (await document).save();
+    }
 
     return res.send({
       status: 200,
