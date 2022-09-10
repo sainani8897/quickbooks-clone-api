@@ -7,8 +7,8 @@ exports.index = async function (req, res, next) {
     /** Pagination obj  */
     const options = {
       page: req.query.page ?? 1,
-      limit: req.query.limit ?? 10,
-      sort: { date: -1 },
+      limit: req.query.limit ?? 2,
+      sort: { createdAt: -1 },
       populate: ['created_by']
     };
 
