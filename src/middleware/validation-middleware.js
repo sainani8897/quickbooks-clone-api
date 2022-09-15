@@ -323,4 +323,42 @@ exports.vendorRules = (req, res, next) => {
 };
 
 
+exports.saleOrderRules = (req, res, next) => {
+  let validationRule = {
+    "payload.order_no": "required",
+    "payload.sale_date": "required|date",
+    "payload.shipment_date": "required|date",
+    "payload.customer_id": "required",
+    "payload.status": "required",
+    "payload.sales_executives": "required|array",   
+    "payload.items": "required|array",   
+    "payload.items.*.product_id": "required",   
+    "payload.items.*.qty": "required",   
+    "payload.items.*.rate": "required",   
+    "payload.items.*.amount": "required",   
+    "payload.sale_details": "required",   
+    "payload.sale_details.total": "required",   
+    "payload.sale_details.sub_total": "required",   
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
+
 

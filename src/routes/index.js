@@ -19,6 +19,7 @@ const permissions = require("../controllers/permissions.controller");
 const category = require("./category");
 const tax = require("./tax");
 const product = require("./product");
+const salesOrder = require("./salesOrders");
 /** Home Route */
 Routes.get("/", function (req, res) {
   res.send("Home api page");
@@ -80,6 +81,9 @@ Routes.use("/taxes", authenticateToken, tax);
 
 /** Tax Routes */
 Routes.use("/products", authenticateToken, product);
+
+/** Sales Order Routes */
+Routes.use("/sales-order", authenticateToken, salesOrder);
 
 
 
