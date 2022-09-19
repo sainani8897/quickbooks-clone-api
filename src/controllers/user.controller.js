@@ -4,7 +4,36 @@ const saltRounds = 10;
 const { NotFoundException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
-  res.send("At Users Controller");
+  try
+  {
+     /** Pagination obj  */
+     const options = {
+      page: req.query.page ?? 1,
+      limit: req.query.limit ?? 10,
+      sort: { date: -1 },
+    };
+
+    const query = req.query;
+    if (
+      typeof req.query._id !== "undefined" &&
+      !req.query._id.match(/^[0-9a-fA-F]{24}$/)
+    ) {
+      return res.send({ status: 404, message: "Not found!" });
+    }
+    const taxes = await User.paginate(query, options);
+    if (taxes.totalDocs > 0)
+    return res.send({ status: 200, message: "Data found", data: taxes });
+  else
+    return res.send({
+      status: 204,
+      message: "No Content found",
+      data: taxes,
+    });
+  }
+  catch(error)
+  {
+    next(error);
+  }
 };
 
 exports.show = async function (req, res, next) {

@@ -18,11 +18,11 @@ const salesOrderSchema = new mongoose.Schema(
     },
     customer_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "customers",
+      ref: "Customer",
     },
     sales_executives: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
     }],
     sale_details:{
       sub_total:Number,
@@ -33,12 +33,16 @@ const salesOrderSchema = new mongoose.Schema(
     items: [mongoose.Schema.Types.Mixed],
     status: {
       type: String,
+      default: 'Order Created',
       required: true,
     },
     description: {
       type: String,
     },
     customer_notes:{
+      type:String
+    },
+    shipping_notes:{
       type:String
     },
     docs: [

@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['created_by']
+      populate: ['created_by','customer_id','sales_executives']
     };
 
     const query = req.query;
@@ -53,7 +53,7 @@ exports.create = async function (req, res, next) {
     /** Basic Form */
     const payload = req.body.payload;
     //  console.log(req.body.payload);
-
+  
     const product = await SalesOder.create({
      order_no:payload.order_no,
      sale_date:payload.sale_date,
@@ -64,6 +64,8 @@ exports.create = async function (req, res, next) {
      sale_details:payload.sale_details,
      customer_comments:payload.customer_comments,
      status:payload.status,
+     created_by: req.user._id,
+     org_id: req.user.org_id
     });
     
     if (Array.isArray(payload.files)) {
@@ -95,11 +97,10 @@ exports.update = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
 
-    var product = await SalesOder.findById({ _id });
-    if (!product)
+    var order = await SalesOder.findById({ _id });
+    if (!order)
       return res.send({ status: 404, message: "No data found", data: {} });
-    const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-    const result = await product.update({
+    const result = await order.update({
       order_no:payload.order_no,
       sale_date:payload.sale_date,
       shipment_date:payload.shipment_date,
@@ -109,6 +110,12 @@ exports.update = async function (req, res, next) {
       sale_details:payload.sale_details,
       customer_comments:payload.customer_comments,
       status:payload.status,
+      created_by: req.user._id,
+      org_id: req.user.org_id,
+      reference: payload.reference,
+      shipping_notes: payload.shipping_notes,
+      customer_notes: payload.notes
+
     });
 
     /** Delete  */

@@ -329,7 +329,7 @@ exports.saleOrderRules = (req, res, next) => {
     "payload.sale_date": "required|date",
     "payload.shipment_date": "required|date",
     "payload.customer_id": "required",
-    "payload.status": "required",
+    // "payload.status": "required",
     "payload.sales_executives": "required|array",   
     "payload.items": "required|array",   
     "payload.items.*.product_id": "required",   

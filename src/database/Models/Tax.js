@@ -37,7 +37,7 @@ const taxSchema = new mongoose.Schema(
  * Pagination
  */
 
- taxSchema.plugin(mongoosePaginate);
+taxSchema.plugin(mongoosePaginate);
 
 const Tax = mongoose.model("Tax", taxSchema);
 

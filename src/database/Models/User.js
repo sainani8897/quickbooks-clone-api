@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const bcrypt = require("bcrypt");
 const { UnauthorizedException } = require("../../exceptions");
 
@@ -106,6 +107,12 @@ userSchema.statics.register = async function (register) {
     return userInstance;
   });
 };
+
+/**
+ * Pagination
+ */
+
+userSchema.plugin(mongoosePaginate);
 
 const User = mongoose.model("User", userSchema);
 
