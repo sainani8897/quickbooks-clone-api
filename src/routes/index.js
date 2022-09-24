@@ -20,6 +20,8 @@ const category = require("./category");
 const tax = require("./tax");
 const product = require("./product");
 const salesOrder = require("./salesOrders");
+const purchaseOrder = require("./purchaseOrder");
+
 /** Home Route */
 Routes.get("/", function (req, res) {
   res.send("Home api page");
@@ -84,6 +86,9 @@ Routes.use("/products", authenticateToken, product);
 
 /** Sales Order Routes */
 Routes.use("/sales-order", authenticateToken, salesOrder);
+
+/** Purchase Order Routes */
+Routes.use("/purchase-order", authenticateToken, purchaseOrder);
 
 
 
