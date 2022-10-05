@@ -24,13 +24,22 @@ const salesOrderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     }],
-    sale_details:{
-      sub_total:Number,
-      discount_amount:Number,
-      tax:Number,
-      total:Number,
+    sale_details: {
+      sub_total: Number,
+      discount_amount: Number,
+      tax: Number,
+      total: Number,
     },
-    items: [mongoose.Schema.Types.Mixed],
+    items: [{
+      product_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      rate: String,
+      amount: String,
+      qty: String
+
+    }],
     status: {
       type: String,
       default: 'Order Created',
@@ -39,11 +48,11 @@ const salesOrderSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    customer_notes:{
-      type:String
+    customer_notes: {
+      type: String
     },
-    shipping_notes:{
-      type:String
+    shipping_notes: {
+      type: String
     },
     docs: [
       {

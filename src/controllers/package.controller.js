@@ -1,4 +1,4 @@
-const PurchaseOrder = require("../database/Models/PurchaseOrder");
+const SalesOder = require("../database/Models/SalesOrder");
 const { NotFoundException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['vendor_id']
+      populate: ['created_by','customer_id','sales_executives']
     };
 
     const query = req.query;
@@ -19,7 +19,7 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
-    const products = await PurchaseOrder.paginate(query, options);
+    const products = await SalesOder.paginate(query, options);
     if (products.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: products });
     else
@@ -35,10 +35,10 @@ exports.index = async function (req, res, next) {
 };
 
 
-exports.show = async function (req, res, next) {
+exports.show = async function (req, res, next) {  
   const _id = req.params.id;
   try {
-    var product = await PurchaseOrder.findById({ _id });
+    var product = await SalesOder.findById({ _id });
     if (product)
       return res.send({ status: 200, message: "Data found", data: product });
     else throw new NotFoundException("No Data Found!");
@@ -52,25 +52,22 @@ exports.create = async function (req, res, next) {
   try {
     /** Basic Form */
     const payload = req.body.payload;
-    console.log(req.body.payload);
-
-    const product = await PurchaseOrder.create({
-      order_no: payload.order_no,
-      sale_date: payload.sale_date,
-      delivery_date: payload.delivery_date,
-      vendor_id: payload.vendor_id,
-      items: payload.items,
-      sale_details: payload.sale_details,
-      customer_comments: payload.customer_comments,
-      status: payload.status,
-      created_by: req.user._id,
-      org_id: req.user.org_id,
-      reference: payload.reference,
-      shipping_notes: payload.shipping_notes,
-      customer_notes: payload.notes,
-      shipment_type:payload.shipment_type
+    //  console.log(req.body.payload);
+  
+    const product = await SalesOder.create({
+     order_no:payload.order_no,
+     sale_date:payload.sale_date,
+     shipment_date:payload.shipment_date,
+     customer_id:payload.customer_id,
+     sales_executives:payload.sales_executives,
+     items:payload.items,
+     sale_details:payload.sale_details,
+     customer_comments:payload.customer_comments,
+     status:payload.status,
+     created_by: req.user._id,
+     org_id: req.user.org_id
     });
-
+    
     if (Array.isArray(payload.files)) {
       /** Files */
       payload.files.forEach((file) => {
@@ -100,24 +97,24 @@ exports.update = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
 
-    var order = await PurchaseOrder.findById({ _id });
+    var order = await SalesOder.findById({ _id });
     if (!order)
       return res.send({ status: 404, message: "No data found", data: {} });
     const result = await order.update({
-      order_no: payload.order_no,
-      sale_date: payload.sale_date,
-      delivery_date: payload.delivery_date,
-      vendor_id: payload.vendor_id,
-      items: payload.items,
-      sale_details: payload.sale_details,
-      customer_comments: payload.customer_comments,
-      status: payload.status,
+      order_no:payload.order_no,
+      sale_date:payload.sale_date,
+      shipment_date:payload.shipment_date,
+      customer_id:payload.customer_id,
+      sales_executives:payload.sales_executives,
+      items:payload.items,
+      sale_details:payload.sale_details,
+      customer_comments:payload.customer_comments,
+      status:payload.status,
       created_by: req.user._id,
       org_id: req.user.org_id,
       reference: payload.reference,
       shipping_notes: payload.shipping_notes,
-      customer_notes: payload.notes,
-      shipment_type:payload.shipment_type
+      customer_notes: payload.notes
 
     });
 
@@ -152,7 +149,7 @@ exports.delete = async function (req, res, next) {
     });
 
     /** Delete */
-    const product = await PurchaseOrder.find(
+    const product = await SalesOder.find(
       {
         _id: ids,
       },

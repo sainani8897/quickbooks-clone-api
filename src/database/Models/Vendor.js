@@ -15,11 +15,23 @@ const AddressSchema = new mongoose.Schema({
   longitude: String,
 });
 
+const SocialSchema = new mongoose.Schema({
+  whatsapp: String,
+  instagram: String,
+  twitter: String,
+  facebook: String,
+  website_url: String,
+});
+
 const VendorSchema = new mongoose.Schema(
   {
     email: {
       type: String,
       unique: true,
+      required: true
+    },
+    saluation: {
+      type: String
     },
     first_name: {
       type: String,
@@ -37,6 +49,18 @@ const VendorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    company_email: {
+      type: String,
+    },
+    company_phone: {
+      type: String,
+    },
+    alt_phone: {
+      type: String
+    },
+    alt_email: {
+      type: String
+    },
     phone_number: {
       type: String,
       unique: true,
@@ -52,6 +76,31 @@ const VendorSchema = new mongoose.Schema(
     },
     timezone: {
       type: String,
+    },
+    status:{
+      type:String,
+      default:"Active",
+      required:true
+    },
+    billing_address: {
+      type: AddressSchema,
+    },
+    shiping_address: {
+      type: AddressSchema,
+    },
+    pan: {
+      type: String
+    },
+    gst: {
+      type: String
+    },
+    profile: {
+      type: String
+    },
+    notes: String,
+    contacts: [mongoose.Schema.Types.Mixed],
+    social_info: {
+      type: SocialSchema,
     },
     org_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -85,7 +134,7 @@ VendorSchema.statics.findByLogin = async function ({ email, password }) {
       return user;
     }
   }
-
+  VendorSchema
   throw new UnauthorizedException(
     "Invalid Login Email & Password do not match!"
   );

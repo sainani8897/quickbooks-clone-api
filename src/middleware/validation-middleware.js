@@ -294,13 +294,13 @@ exports.vendorRules = (req, res, next) => {
     "payload.display_name": "required",
     "payload.email": "required|email",
     "payload.phone_number": "required",
-    "payload.address": "required",
+    /* "payload.address": "required",
     "payload.address.address_line1": "required",
     "payload.address.address_line2": "required",
     "payload.address.city": "required",
     "payload.address.state": "required",
     "payload.address.pin": "required",
-    "payload.address.country": "required",
+    "payload.address.country": "required", */
   };
 
   if (req.method == "PATCH") {
