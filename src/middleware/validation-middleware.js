@@ -396,5 +396,35 @@ exports.purchaseOrderRules = (req, res, next) => {
   });
 };
 
+exports.packageRules = (req, res, next) => {
+  let validationRule = {
+    "payload.package_slip": "required",
+    "payload.date": "required|date",
+    // "payload.status": "required",
+    "payload.sales_order":"required",
+    "payload.package": "required|array",  
+    "payload.package.*.product_id": "required",
+    "payload.package.*.pcs": "required",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
 
 

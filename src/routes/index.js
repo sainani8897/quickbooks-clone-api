@@ -21,6 +21,7 @@ const tax = require("./tax");
 const product = require("./product");
 const salesOrder = require("./salesOrders");
 const purchaseOrder = require("./purchaseOrder");
+const package = require("./package");
 
 /** Home Route */
 Routes.get("/", function (req, res) {
@@ -90,6 +91,8 @@ Routes.use("/sales-order", authenticateToken, salesOrder);
 /** Purchase Order Routes */
 Routes.use("/purchase-order", authenticateToken, purchaseOrder);
 
+/** Package Routes */
+Routes.use("/packages", authenticateToken, package);
 
 
 module.exports = Routes;

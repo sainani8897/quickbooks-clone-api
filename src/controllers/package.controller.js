@@ -1,4 +1,4 @@
-const SalesOder = require("../database/Models/SalesOrder");
+const Package = require("../database/Models/Package");
 const { NotFoundException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['created_by','customer_id','sales_executives']
+      populate: ['sales_order']
     };
 
     const query = req.query;
@@ -19,14 +19,14 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
-    const products = await SalesOder.paginate(query, options);
-    if (products.totalDocs > 0)
-      return res.send({ status: 200, message: "Data found", data: products });
+    const packages = await Package.paginate(query, options);
+    if (packages.totalDocs > 0)
+      return res.send({ status: 200, message: "Data found", data: packages });
     else
       return res.send({
         status: 204,
         message: "No Content found",
-        data: products,
+        data: packages,
       });
   }
   catch (error) {
@@ -38,9 +38,9 @@ exports.index = async function (req, res, next) {
 exports.show = async function (req, res, next) {  
   const _id = req.params.id;
   try {
-    var product = await SalesOder.findById({ _id });
-    if (product)
-      return res.send({ status: 200, message: "Data found", data: product });
+    var package = await Package.findById({ _id });
+    if (package)
+      return res.send({ status: 200, message: "Data found", data: package });
     else throw new NotFoundException("No Data Found!");
   } catch (error) {
     next(error);
@@ -54,15 +54,14 @@ exports.create = async function (req, res, next) {
     const payload = req.body.payload;
     //  console.log(req.body.payload);
   
-    const product = await SalesOder.create({
-     order_no:payload.order_no,
-     sale_date:payload.sale_date,
-     shipment_date:payload.shipment_date,
-     customer_id:payload.customer_id,
-     sales_executives:payload.sales_executives,
-     items:payload.items,
-     sale_details:payload.sale_details,
-     customer_comments:payload.customer_comments,
+    const product = await Package.create({
+     package_slip:payload.package_slip,
+     date:payload.date,
+     status:payload.status,
+     sales_order:payload.sales_order,
+     package:payload.package,
+     package_notes:payload.package_notes,
+     shipping_notes:payload.shipping_notes,
      status:payload.status,
      created_by: req.user._id,
      org_id: req.user.org_id
@@ -97,24 +96,20 @@ exports.update = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
 
-    var order = await SalesOder.findById({ _id });
+    var order = await Package.findById({ _id });
     if (!order)
       return res.send({ status: 404, message: "No data found", data: {} });
     const result = await order.update({
-      order_no:payload.order_no,
-      sale_date:payload.sale_date,
-      shipment_date:payload.shipment_date,
-      customer_id:payload.customer_id,
-      sales_executives:payload.sales_executives,
-      items:payload.items,
-      sale_details:payload.sale_details,
-      customer_comments:payload.customer_comments,
+      package_slip:payload.package_slip,
+      date:payload.date,
+      status:payload.status,
+      sales_order:payload.sales_order,
+      package:payload.package,
+      package_notes:payload.package_notes,
+      shipping_notes:payload.shipping_notes,
       status:payload.status,
       created_by: req.user._id,
-      org_id: req.user.org_id,
-      reference: payload.reference,
-      shipping_notes: payload.shipping_notes,
-      customer_notes: payload.notes
+      org_id: req.user.org_id
 
     });
 
@@ -149,21 +144,21 @@ exports.delete = async function (req, res, next) {
     });
 
     /** Delete */
-    const product = await SalesOder.find(
+    const package = await Package.find(
       {
         _id: ids,
       },
       null
     );
     // console.log(vendor);
-    if (product.length <= 0) {
+    if (package.length <= 0) {
       return res.send({
         status: 204,
         message: "No Data found!",
       });
     }
 
-    product.forEach((doc) => {
+    package.forEach((doc) => {
       /** Delete File */
       doc.delete();
     });

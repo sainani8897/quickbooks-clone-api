@@ -7,7 +7,7 @@ const packageSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        sale_date: {
+        date: {
             type: Date,
         },
         package: [{
@@ -21,6 +21,10 @@ const packageSchema = new mongoose.Schema(
             type: String,
             default: 'Package Created',
             required: true,
+        },
+        sales_order:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "SalesOrder",
         },
         package_notes: {
             type: String
