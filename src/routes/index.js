@@ -22,6 +22,7 @@ const product = require("./product");
 const salesOrder = require("./salesOrders");
 const purchaseOrder = require("./purchaseOrder");
 const package = require("./package");
+const shipment = require("./shipment");
 
 /** Home Route */
 Routes.get("/", function (req, res) {
@@ -93,6 +94,9 @@ Routes.use("/purchase-order", authenticateToken, purchaseOrder);
 
 /** Package Routes */
 Routes.use("/packages", authenticateToken, package);
+
+/** Shipment Routes */
+Routes.use("/shipment", authenticateToken, shipment);
 
 
 module.exports = Routes;

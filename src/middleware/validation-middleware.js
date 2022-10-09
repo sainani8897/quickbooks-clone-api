@@ -426,5 +426,33 @@ exports.packageRules = (req, res, next) => {
   });
 };
 
+exports.shipmentRules = (req, res, next) => {
+  let validationRule = {
+    "payload.shipment_type": "required",
+    "payload.shipment_date": "required|date",
+    "payload.shipment_no": "required|date",
+    "payload.status": "required",
+    "payload.sales_order":"required",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
 
 
