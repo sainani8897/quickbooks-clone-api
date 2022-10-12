@@ -428,9 +428,9 @@ exports.packageRules = (req, res, next) => {
 
 exports.shipmentRules = (req, res, next) => {
   let validationRule = {
-    "payload.shipment_type": "required",
+    "payload.shipping_type": "required",
     "payload.shipment_date": "required|date",
-    "payload.shipment_no": "required|date",
+    "payload.shipment_no": "required",
     "payload.status": "required",
     "payload.sales_order":"required",
   };
