@@ -183,33 +183,33 @@ exports.roleRules = (req, res, next) => {
   });
 };
 
-  // Customers
-  
-  exports.myCustomers = (req, res, next) => {
-    let validationRule = {
-      "payload.first_name": "required",
-      "payload.last_name": "required",
-      "payload.email": "required|email",
-      "payload.mobile": "required|numeric",     
-      // "payload.company_name":"string",
-      // "payload.company_email":"email",
-      // "payload.address.address_line1":"required|string",
-      // "payload.address.address_line2":"required|string",
-      // "payload.address.city":"required|string",
-      // "payload.address.state":"required|string",
-      // "payload.address.pincode":'required|numeric',
-      // "payload.address.latitude" :'required|numeric',
-      // "payload.address.longitude"  :'required|numeric',
-      "payload.status"  : 'required|string'
-    };
+// Customers
 
-    validator(req.body, validationRule, {}, (err, status) => {
-      if (!status) {
-        throw new ValidationException("Validation Failed", err);
-      } else {
-        next();
-      }
-    });
+exports.myCustomers = (req, res, next) => {
+  let validationRule = {
+    "payload.first_name": "required",
+    "payload.last_name": "required",
+    "payload.email": "required|email",
+    "payload.mobile": "required|numeric",
+    // "payload.company_name":"string",
+    // "payload.company_email":"email",
+    // "payload.address.address_line1":"required|string",
+    // "payload.address.address_line2":"required|string",
+    // "payload.address.city":"required|string",
+    // "payload.address.state":"required|string",
+    // "payload.address.pincode":'required|numeric',
+    // "payload.address.latitude" :'required|numeric',
+    // "payload.address.longitude"  :'required|numeric',
+    "payload.status": 'required|string'
+  };
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
 };
 
 // Category validation rules
@@ -217,10 +217,10 @@ exports.roleRules = (req, res, next) => {
 exports.myCategories = (req, res, next) => {
   let validationRule = {
     "payload.category_name": "required|string",
-    "payload.sort": "required|numeric",    
-    "payload.status"  : "required|string"
+    "payload.sort": "required|numeric",
+    "payload.status": "required|string"
   };
-  
+
   if (req.method == "DELETE") {
     validationRule = {
       _id: "required|array",
@@ -242,8 +242,8 @@ exports.myTaxes = (req, res, next) => {
   let validationRule = {
     "payload.title": "required|string",
     "payload.type": "required|in:percentage,amount",
-    "payload.value": "required|numeric",    
-    "payload.status"  : "required|string"
+    "payload.value": "required|numeric",
+    "payload.status": "required|string"
   };
 
   validator(req.body, validationRule, {}, (err, status) => {
@@ -283,7 +283,7 @@ exports.myProducts = (req, res, next) => {
       next();
     }
   });
-  
+
 };
 
 exports.vendorRules = (req, res, next) => {
@@ -329,16 +329,15 @@ exports.saleOrderRules = (req, res, next) => {
     "payload.sale_date": "required|date",
     "payload.shipment_date": "required|date",
     "payload.customer_id": "required",
-    // "payload.status": "required",
-    "payload.sales_executives": "required|array",   
-    "payload.items": "required|array",   
-    "payload.items.*.product_id": "required",   
-    "payload.items.*.qty": "required",   
-    "payload.items.*.rate": "required",   
-    "payload.items.*.amount": "required",   
-    "payload.sale_details": "required",   
-    "payload.sale_details.total": "required",   
-    "payload.sale_details.sub_total": "required",   
+    "payload.sales_executives": "required|array",
+    "payload.items": "required|array",
+    "payload.items.*.product_id": "required",
+    "payload.items.*.qty": "required",
+    "payload.items.*.rate": "required",
+    "payload.items.*.amount": "required",
+    "payload.sale_details": "required",
+    "payload.sale_details.total": "required",
+    "payload.sale_details.sub_total": "required",
   };
 
   if (req.method == "PATCH") {
@@ -367,14 +366,14 @@ exports.purchaseOrderRules = (req, res, next) => {
     "payload.delivery_date": "required|date",
     "payload.vendor_id": "required",
     // "payload.status": "required",
-    "payload.items": "required|array",   
-    "payload.items.*.product_id": "required",   
-    "payload.items.*.qty": "required",   
-    "payload.items.*.rate": "required",   
-    "payload.items.*.amount": "required",   
-    "payload.sale_details": "required",   
-    "payload.sale_details.total": "required",   
-    "payload.sale_details.sub_total": "required",   
+    "payload.items": "required|array",
+    "payload.items.*.product_id": "required",
+    "payload.items.*.qty": "required",
+    "payload.items.*.rate": "required",
+    "payload.items.*.amount": "required",
+    "payload.sale_details": "required",
+    "payload.sale_details.total": "required",
+    "payload.sale_details.sub_total": "required",
   };
 
   if (req.method == "PATCH") {
@@ -401,8 +400,8 @@ exports.packageRules = (req, res, next) => {
     "payload.package_slip": "required",
     "payload.date": "required|date",
     // "payload.status": "required",
-    "payload.sales_order":"required",
-    "payload.package": "required|array",  
+    "payload.sales_order": "required",
+    "payload.package": "required|array",
     "payload.package.*.product_id": "required",
     "payload.package.*.pcs": "required",
   };
@@ -432,7 +431,7 @@ exports.shipmentRules = (req, res, next) => {
     "payload.shipment_date": "required|date",
     "payload.shipment_no": "required",
     "payload.status": "required",
-    "payload.sales_order":"required",
+    "payload.sales_order": "required",
   };
 
   if (req.method == "PATCH") {
@@ -454,5 +453,40 @@ exports.shipmentRules = (req, res, next) => {
   });
 };
 
+exports.invoiceRules = (req, res, next) => {
+  let validationRule = {
+    "payload.order_no": "required",
+    "payload.invoice_date": "required|date",
+    "payload.shipment_date": "date",
+    "payload.customer_id": "required",
+    "payload.sales_executives": "required|array",
+    "payload.items": "required|array",
+    "payload.items.*.product_id": "required",
+    "payload.items.*.qty": "required",
+    "payload.items.*.rate": "required",
+    "payload.items.*.amount": "required",
+    "payload.sale_details": "required",
+    "payload.sale_details.total": "required",
+    "payload.sale_details.sub_total": "required",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
 
 
