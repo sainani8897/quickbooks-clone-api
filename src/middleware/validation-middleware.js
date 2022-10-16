@@ -268,7 +268,7 @@ exports.myProducts = (req, res, next) => {
 
   if (req.method == "PATCH") {
     validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
-  }
+  }``
 
   if (req.method == "DELETE") {
     validationRule = {
@@ -468,6 +468,37 @@ exports.invoiceRules = (req, res, next) => {
     "payload.sale_details": "required",
     "payload.sale_details.total": "required",
     "payload.sale_details.sub_total": "required",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
+exports.paymentRules = (req, res, next) => {
+  let validationRule = {
+    "payload.payment_no": "required",
+    "payload.payment_date": "required|date",
+    "payload.amount": "required",
+    "payload.invoice": "required",
+    "payload.payment_mode":"required|in:Bank Transfer,Check,Cash",
+    "payload.deposit_to":"required",
+    "payload.payment_type":"required|in:full_amount,partial_amount",
+
   };
 
   if (req.method == "PATCH") {

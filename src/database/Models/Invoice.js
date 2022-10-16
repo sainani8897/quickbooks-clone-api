@@ -17,6 +17,10 @@ const invoiceSchema = new mongoose.Schema(
         invoice_date: {
             type: Date,
         },
+        due_date: {
+            type: Date,
+            default:Date.now()
+        },
         shipment_date: {
             type: Date,
         },
@@ -48,6 +52,10 @@ const invoiceSchema = new mongoose.Schema(
             type: String,
             default: 'Invoice Created',
             required: true,
+        },
+        payment:{
+            type:String,
+            default:"Un-paid"
         },
         description: {
             type: String,

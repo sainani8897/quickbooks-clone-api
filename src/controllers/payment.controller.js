@@ -1,15 +1,15 @@
+const Payment = require("../database/Models/Payment");
 const Invoice = require("../database/Models/Invoice");
-const { NotFoundException } = require("../exceptions");
+const { NotFoundException,ValidationException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
-
     try {
         /** Pagination obj  */
         const options = {
             page: req.query.page ?? 1,
             limit: req.query.limit ?? 10,
             sort: { createdAt: -1 },
-            populate: ['customer_id','items.product_id']
+            populate: ['customer']
         };
 
         const query = req.query;
@@ -19,14 +19,14 @@ exports.index = async function (req, res, next) {
         ) {
             return res.send({ status: 404, message: "Not found!" });
         }
-        const invoices = await Invoice.paginate(query, options);
-        if (invoices.totalDocs > 0)
-            return res.send({ status: 200, message: "Data found", data: invoices });
+        const payments = await Payment.paginate(query, options);
+        if (payments.totalDocs > 0)
+            return res.send({ status: 200, message: "Data found", data: payments });
         else
             return res.send({
                 status: 204,
                 message: "No Content found",
-                data: invoices,
+                data: payments,
             });
     }
     catch (error) {
@@ -38,7 +38,7 @@ exports.index = async function (req, res, next) {
 exports.show = async function (req, res, next) {
     const _id = req.params.id;
     try {
-        var invoice = await Invoice.findById({ _id });
+        var invoice = await Payment.findById({ _id });
         if (invoice)
             return res.send({ status: 200, message: "Data found", data: invoice });
         else throw new NotFoundException("No Data Found!");
@@ -52,29 +52,67 @@ exports.create = async function (req, res, next) {
     try {
         /** Basic Form */
         const payload = req.body.payload;
+        const invoice = await Invoice.findOne({ _id: payload.invoice });
 
-        const invoice = await Invoice.create({
-            order_no: payload.order_no,
-            invoice_no: payload.invoice_no,
-            invoice_date: payload.invoice_date,
-            shipment_date: payload.shipment_date,
-            customer_id: payload.customer_id,
-            sales_executives: payload.sales_executives,
-            items: payload.items,
-            sale_details: payload.sale_details,
-            customer_comments: payload.customer_comments,
+        if (!invoice)
+            return res.status(404).send({ status: 404, message: "Invoice not found!", data: {} });
+
+        const customer = invoice.customer_id
+
+        /* Get the all the listed payments */
+        const paymentSum = await Payment.aggregate([
+            { $match: { invoice: invoice._id } },
+            {
+                $group: {
+                    _id: "$invoice",
+                    total: {
+                        $sum: "$amount"
+                    }
+                }
+            }
+        ]);
+
+        const totalAmount = parseFloat(paymentSum[0].total) + parseFloat(payload.amount);
+        let remaining_due = invoice.sale_details.total - totalAmount
+
+        /* Calculate the Balance  */
+        if (invoice.sale_details.total < totalAmount) {
+            throw new ValidationException("Payment amount cannot be greater the payable amount");
+        }
+
+        const payment = await Payment.create({
+            payment_no: payload.payment_no,
+            payment_date: payload.payment_date,
+            invoice: payload.invoice,
+            customer: customer,
+            amount: payload.amount,
+            remaining_due: remaining_due,
+            payment_mode: payload.payment_mode,
+            payment_type: payload.payment_type,
+            deposit_to: payload.deposit_to,
             status: payload.status,
             created_by: req.user._id,
             org_id: req.user.org_id
         });
+        
+        if(remaining_due==0){
+            invoice.status = "Completed";
+            invoice.payment = "Paid"
+        }
+        else {
+            invoice.payment = "Partially Paid";
+        } 
+        
+        await invoice.save()
+
 
         if (Array.isArray(payload.files)) {
             /** Files */
             payload.files.forEach((file) => {
-                invoice.files.push(file);
+                payment.files.push(file);
             });
 
-            (await invoice).save();
+            (await payment).save();
         }
 
         return res.send({
@@ -92,29 +130,21 @@ exports.update = async function (req, res, next) {
         /** Basic Form */
         const payload = req.body.payload;
         const _id = payload._id;
-        console.log(_id);
+
         if (typeof _id !== "undefined" && !_id.match(/^[0-9a-fA-F]{24}$/)) {
             return res.send({ status: 404, message: "Not found!" });
         }
 
-        var order = await Invoice.findById({ _id });
+        var order = await Payment.findById({ _id });
         if (!order)
             return res.send({ status: 404, message: "No data found", data: {} });
 
         const result = await order.update({
-            order_no: payload.order_no,
-            invoice_no: payload.invoice_no,
-            invoice_date: payload.invoice_date,
-            shipment_date: payload.shipment_date,
-            customer_id: payload.customer_id,
-            sales_executives: payload.sales_executives,
-            items: payload.items,
-            sale_details: payload.sale_details,
-            customer_comments: payload.customer_comments,
+            payment_date: payload.payment_date,
+            payment_mode: payload.payment_mode,
+            payment_type: payload.payment_type,
+            deposit_to: payload.deposit_to,
             status: payload.status,
-            created_by: req.user._id,
-            org_id: req.user.org_id
-
         });
 
         /** Delete  */
@@ -148,7 +178,7 @@ exports.delete = async function (req, res, next) {
         });
 
         /** Delete */
-        const invoice = await Invoice.find(
+        const invoice = await Payment.find(
             {
                 _id: ids,
             },
