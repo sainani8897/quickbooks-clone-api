@@ -66,6 +66,10 @@ const invoiceSchema = new mongoose.Schema(
         shipping_notes: {
             type: String
         },
+        sales_order:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "SalesOrder",
+        },
         docs: [
             {
                 type: mongoose.Schema.Types.ObjectId,

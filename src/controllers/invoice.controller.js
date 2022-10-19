@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
             page: req.query.page ?? 1,
             limit: req.query.limit ?? 10,
             sort: { createdAt: -1 },
-            populate: ['customer_id','items.product_id']
+            populate: ['customer_id','items.product_id','sales_order']
         };
 
         const query = req.query;
@@ -61,6 +61,7 @@ exports.create = async function (req, res, next) {
             customer_id: payload.customer_id,
             sales_executives: payload.sales_executives,
             items: payload.items,
+            sales_order:payload.sales_order,
             sale_details: payload.sale_details,
             customer_comments: payload.customer_comments,
             status: payload.status,
@@ -108,6 +109,7 @@ exports.update = async function (req, res, next) {
             shipment_date: payload.shipment_date,
             customer_id: payload.customer_id,
             sales_executives: payload.sales_executives,
+            sales_order:payload.sales_order,
             items: payload.items,
             sale_details: payload.sale_details,
             customer_comments: payload.customer_comments,

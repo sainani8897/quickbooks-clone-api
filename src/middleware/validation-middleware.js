@@ -458,6 +458,7 @@ exports.invoiceRules = (req, res, next) => {
     "payload.order_no": "required",
     "payload.invoice_date": "required|date",
     "payload.shipment_date": "date",
+    "payload.sales_order": "required",
     "payload.customer_id": "required",
     "payload.sales_executives": "required|array",
     "payload.items": "required|array",
@@ -519,5 +520,6 @@ exports.paymentRules = (req, res, next) => {
     }
   });
 };
+
 
 
