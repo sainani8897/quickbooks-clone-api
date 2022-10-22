@@ -8,7 +8,7 @@ exports.index = async function (req, res, next) {
     /** Pagination obj  */
     const options = {
       page: req.query.page ?? 1,
-      limit: req.query.limit ?? 10,
+      limit: req.query.limit ?? 100,
       sort: { date: -1 }
     };
 

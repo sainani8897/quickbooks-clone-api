@@ -1,7 +1,7 @@
 const { Role, Permission } = require("../database/Models");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const { NotFoundException } = require("../exceptions");
+const { NotFoundException,ValidationException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
   try {
@@ -54,8 +54,13 @@ exports.create = async function (req, res, next) {
 
     const role = await Role.create({
       name: payload.name,
+      display_text:payload.display_text,
       created_by: req.user._id,
+      org_id: req.user.org_id
     });
+
+    if(payload.name === 'super_admin')
+      return res.status(400).send({ status: 400, message: "Cannot give Super Admin Try using other role name", data: {} });
 
     const perm = [];
     if (Array.isArray(payload.permissions)) {
@@ -86,14 +91,33 @@ exports.update = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
 
+    if(payload.name === 'super_admin')
+      throw new ValidationException("Cannot give Super Admin Try using other role name");
+    
     var role = await Role.findById({ _id });
     if (!role)
       return res.send({ status: 404, message: "No data found", data: {} });
+  
+    if(role.name === 'super_admin')
+      throw new ValidationException("Cannot Edit Adminstrator Role");
 
+    if(payload.name === 'super_admin')
+    return res.status(400).send({ status: 400, message: "Cannot give Super Admin Try using other role name", data: {} });
+
+    const perm = [];
+    if (Array.isArray(payload.permissions)) {
+      /** Permissions */
+      payload.permissions.forEach((permission) => {
+        perm.push(permission);
+      });
+      role.permissions = perm;
+      await role.save();
+    }
     const result = await role.update({
       name: payload.name,
-      added_at: payload.added_at,
+      display_text:payload.display_text,
       created_by: req.user._id,
+      org_id: req.user.org_id
     });
 
     /** Delete  */

@@ -151,23 +151,23 @@ const customersManagement = [
 const vendorsManagement = [
   {
     name: "read_vendors",
-    display_text: "Read Customer",
-    group_name: "Customer Management"
+    display_text: "Read Vendor",
+    group_name: "Vendor Management"
   },
   {
     name: "create_vendors",
-    display_text: "Create Customer",
-    group_name: "Customer Management"
+    display_text: "Create Vendor",
+    group_name: "Vendor Management"
   },
   {
     name: "update_vendors",
-    display_text: "Update Customer",
-    group_name: "Customer Management"
+    display_text: "Update Vendor",
+    group_name: "Vendor Management"
   },
   {
     name: "delete_vendors",
-    display_text: "Delete Customer",
-    group_name: "Customer Management"
+    display_text: "Delete Vendor",
+    group_name: "Vendor Management"
   }
 ]
 
@@ -213,6 +213,9 @@ const permissionSeeder = async () => {
 
   if (permissions) {
     superAdmin.permissions = permissions;
+    
+    /* Save the Super admin permissions */
+    superAdmin.save()
 
     const org = await Organization.findOneAndUpdate(
       { name: "Decode Labs" },
