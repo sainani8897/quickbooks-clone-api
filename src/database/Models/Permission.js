@@ -16,6 +16,17 @@ const permissionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    group_name: {
+      type: String
+    },
+    org_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+    },
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true },
   {

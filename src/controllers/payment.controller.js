@@ -72,7 +72,9 @@ exports.create = async function (req, res, next) {
             }
         ]);
 
-        const totalAmount = parseFloat(paymentSum[0].total) + parseFloat(payload.amount);
+        total = paymentSum[0]?.total ?? 0
+
+        const totalAmount = parseFloat(total) + parseFloat(payload.amount);
         let remaining_due = invoice.sale_details.total - totalAmount
 
         /* Calculate the Balance  */
@@ -92,7 +94,8 @@ exports.create = async function (req, res, next) {
             deposit_to: payload.deposit_to,
             status: payload.status,
             created_by: req.user._id,
-            org_id: req.user.org_id
+            org_id: req.user.org_id,
+            reference:payload.reference
         });
         
         if(remaining_due==0){
@@ -145,6 +148,8 @@ exports.update = async function (req, res, next) {
             payment_type: payload.payment_type,
             deposit_to: payload.deposit_to,
             status: payload.status,
+            notes:payload.notes,
+            reference:payload.reference
         });
 
         /** Delete  */

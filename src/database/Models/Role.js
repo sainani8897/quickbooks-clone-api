@@ -21,7 +21,15 @@ const rolesSchema = new mongoose.Schema(
     display_text:{
       type:String,
       required:true
-    }
+    },
+    org_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+    },
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true },
   {

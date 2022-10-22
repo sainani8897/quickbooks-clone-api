@@ -9,8 +9,7 @@ exports.index = async function (req, res, next) {
     const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
-      sort: { date: -1 },
-      populate: ["files", "created_by"],
+      sort: { date: -1 }
     };
 
     const query = req.query;
@@ -62,7 +61,11 @@ exports.create = async function (req, res, next) {
 
     const permission = await Permission.create({
       name: payload.name,
+      group_name:payload.group_name,
+      display_text:payload.display_text,
+      description:payload.description,
       created_by: req.user._id,
+      org_id: req.user.org_id,
     });
 
     if (Array.isArray(payload.files)) {
@@ -99,8 +102,11 @@ exports.update = async function (req, res, next) {
 
     const result = await permission.update({
       name: payload.name,
-      added_at: payload.added_at,
+      group_name:payload.group_name,
+      display_text:payload.display_text,
+      description:payload.description,
       created_by: req.user._id,
+      org_id: req.user.org_id,
     });
 
     /** Delete  */
