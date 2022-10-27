@@ -7,13 +7,7 @@ exports.signup = (req, res, next) => {
     first_name: "required|string",
     last_name: "required|string",
     password: "required|string|min:6|confirmed",
-    question1: "required|string",
-    answer1: "required|string",
-    question2: "required|string",
-    answer2: "required|string",
-    question3: "required|string",
-    answer3: "required|string",
-    phone_number: "required|numeric",
+
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
@@ -36,6 +30,32 @@ exports.login = (req, res, next) => {
       next();
     }
   });
+};
+
+exports.userRules = (req, res, next) => {
+  const validationRule = {
+    email: "required|email",
+    first_name: "required|string",
+    last_name: "required|string",
+    roles: "required|array"
+
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["_id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+  else{
+    validationRule["password"] = "required|string|min:6|confirmed" ;
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+
 };
 
 exports.changePassword = (req, res, next) => {
@@ -268,7 +288,7 @@ exports.myProducts = (req, res, next) => {
 
   if (req.method == "PATCH") {
     validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
-  }``
+  } ``
 
   if (req.method == "DELETE") {
     validationRule = {
@@ -496,9 +516,9 @@ exports.paymentRules = (req, res, next) => {
     "payload.payment_date": "required|date",
     "payload.amount": "required",
     "payload.invoice": "required",
-    "payload.payment_mode":"required|in:Bank Transfer,Check,Cash",
-    "payload.deposit_to":"required",
-    "payload.payment_type":"required|in:full_amount,partial_amount",
+    "payload.payment_mode": "required|in:Bank Transfer,Check,Cash",
+    "payload.deposit_to": "required",
+    "payload.payment_type": "required|in:full_amount,partial_amount",
 
   };
 

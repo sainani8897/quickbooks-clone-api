@@ -46,7 +46,6 @@ const userSchema = new mongoose.Schema(
     },
     phone_number: {
       type: String,
-      required: true,
       unique: true,
     },
     email_verfied:{
@@ -64,6 +63,10 @@ const userSchema = new mongoose.Schema(
     org_id:{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
+    },
+    status  :{
+      type: String,
+      default:"Active"
     },
     roles: [
       {
