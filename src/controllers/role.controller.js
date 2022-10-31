@@ -21,6 +21,12 @@ exports.index = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
 
+    if(query.not_admin && query.not_admin == 'true'){
+      query.name = { $ne: 'super_admin' } 
+    }
+
+    console.log(query);
+
     const roles = await Role.paginate(query, options);
     if (roles.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: roles });
