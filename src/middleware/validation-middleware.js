@@ -579,4 +579,36 @@ exports.billRules = (req, res, next) => {
 };
 
 
+exports.receivableRules = (req, res, next) => {
+  let validationRule = {
+    "payload.receivable_no": "required",
+    "payload.date": "required|date",
+    // "payload.status": "required",
+    "payload.purchase_order": "required",
+    "payload.receivable": "required|array",
+    "payload.receivable.*.product_id": "required",
+    "payload.receivable.*.ordered_qty": "required",
+    "payload.receivable.*.received_qty": "required",
+  };
+
+  if (req.method == "PATCH") {
+    validationRule["payload._id"] = ["required", "regex:/^[0-9a-fA-F]{24}$/"];
+  }
+
+  if (req.method == "DELETE") {
+    validationRule = {
+      _id: "required|array",
+    };
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException("Validation Failed", err);
+    } else {
+      next();
+    }
+  });
+};
+
+
 

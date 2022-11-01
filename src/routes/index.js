@@ -26,6 +26,8 @@ const shipment = require("./shipment");
 const invoice = require("./invoice");
 const payment = require("./payment");
 const bill = require("./bill");
+const receivables = require("./receivables");
+
 
 /** Home Route */
 Routes.get("/", function (req, res) {
@@ -109,5 +111,8 @@ Routes.use("/payment", authenticateToken, payment);
 
 /* Purchase Order bill */
 Routes.use("/bills", authenticateToken, bill);
+
+/* Receivable Controller */
+Routes.use("/receivables", authenticateToken, receivables);
 
 module.exports = Routes;
