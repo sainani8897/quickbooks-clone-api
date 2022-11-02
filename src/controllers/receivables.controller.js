@@ -19,14 +19,14 @@ exports.index = async function (req, res, next) {
         ) {
             return res.send({ status: 404, message: "Not found!" });
         }
-        const packages = await Receivables.paginate(query, options);
-        if (packages.totalDocs > 0)
-            return res.send({ status: 200, message: "Data found", data: packages });
+        const receviables = await Receivables.paginate(query, options);
+        if (receviables.totalDocs > 0)
+            return res.send({ status: 200, message: "Data found", data: receviables });
         else
             return res.send({
                 status: 204,
                 message: "No Content found",
-                data: packages,
+                data: receviables,
             });
     }
     catch (error) {
@@ -38,9 +38,9 @@ exports.index = async function (req, res, next) {
 exports.show = async function (req, res, next) {
     const _id = req.params.id;
     try {
-        var package = await Receivables.findById({ _id });
-        if (package)
-            return res.send({ status: 200, message: "Data found", data: package });
+        var receviable = await Receivables.findById({ _id });
+        if (receviable)
+            return res.send({ status: 200, message: "Data found", data: receviable });
         else throw new NotFoundException("No Data Found!");
     } catch (error) {
         next(error);
@@ -140,21 +140,21 @@ exports.delete = async function (req, res, next) {
         });
 
         /** Delete */
-        const package = await Package.find(
+        const receviable = await Receivables.find(
             {
                 _id: ids,
             },
             null
         );
         // console.log(vendor);
-        if (package.length <= 0) {
+        if (receviable.length <= 0) {
             return res.send({
                 status: 204,
                 message: "No Data found!",
             });
         }
 
-        package.forEach((doc) => {
+        receviable.forEach((doc) => {
             /** Delete File */
             doc.delete();
         });
