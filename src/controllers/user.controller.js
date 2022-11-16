@@ -59,7 +59,6 @@ exports.create = async function (req, res, next) {
         start_date: req.body.start_date,
         end_date: req.body.end_date,
         status: req.body.status,
-
       }
     )
     return res.send({
@@ -90,13 +89,13 @@ exports.update = async function (req, res, next) {
       {
         email: req.body.email,
         name: req.body.first_name + " " + req.body.last_name,
-        roles: req.body.roles,
+        roles: req.body.roles ?? user.roles,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        start_date: req.body.start_date,
-        end_date: req.body.end_date,
-        phone_number:req.body.phone,
-        status: req.body.status,
+        start_date: req.body.start_date ?? user.start_date,
+        end_date: req.body.end_date ?? user.end_date,
+        phone_number:req.body.phone_number ?? user.phone_number,
+        status: req.body.status ?? user.status,
       }
     )    
     return res.send({
