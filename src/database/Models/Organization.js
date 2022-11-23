@@ -4,7 +4,7 @@ const { UnauthorizedException } = require("../../exceptions");
 
 const AddressSchema = new mongoose.Schema({
     address_line1: String,
-    address_line1: String,
+    address_line2: String,
     city: String,
     state:String,
     pin:String,
@@ -23,7 +23,9 @@ const orgSchema = new mongoose.Schema(
         type:String
     },
     org_email:{
-        type:String
+        type:String,
+        unique: true,
+        required: true,
     },
     address:{
         type: AddressSchema,

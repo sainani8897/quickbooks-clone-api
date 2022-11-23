@@ -4,10 +4,11 @@ const { ValidationException } = require("../exceptions");
 exports.signup = (req, res, next) => {
   const validationRule = {
     email: "required|email",
+    org_email: "required|email",
+    org_name:"required|string",
     first_name: "required|string",
     last_name: "required|string",
     password: "required|string|min:6|confirmed",
-
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
