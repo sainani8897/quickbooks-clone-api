@@ -2,6 +2,7 @@ const {
   User,
   PersonalAccessTokens,
   Organization,
+  Role,
 } = require("../database/Models");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
@@ -48,21 +49,23 @@ exports.register = async function (req, res, next) {
     req.body.password = await bcrypt.hashSync(req.body.password, saltRounds);
     req.body.name = req.body.first_name + " " + req.body.last_name;
 
+    const role = await Role.findOne({ name: "super_admin" });
     const payload = req.body;
 
     const organization = await Organization.create({
-      org_email:payload.org_email,
-      name:payload.org_name,
-      address_line1:payload.address_line1,
-      address_line2:payload.address_line2,
-      city:payload.city,
-      state:payload.state,
-      pin:payload.pin,
-      country:payload.country,
-      country_code:payload.country_code,
+      org_email: payload.org_email,
+      name: payload.org_name,
+      address_line1: payload.address_line1,
+      address_line2: payload.address_line2,
+      city: payload.city,
+      state: payload.state,
+      pin: payload.pin,
+      country: payload.country,
+      country_code: payload.country_code,
     });
-    
-    const user = await User.create(req.body);
+
+    payload.roles = [role._id];
+    const user = await User.create(payload);
     const token = jwt.sign({ data: user }, process.env.APP_KEY, {
       expiresIn: "5d",
     });
@@ -71,12 +74,15 @@ exports.register = async function (req, res, next) {
     const personal_token = await PersonalAccessTokens.create({
       token,
       user: user._id,
-    })
+    });
     await user.save();
     res
       .status(200)
-      .json({status: 200, message: "Created Successfully", data: {_id: user._id, name: user.name, email: user.email, token} });
-
+      .json({
+        status: 200,
+        message: "Created Successfully",
+        data: { _id: user._id, name: user.name, email: user.email, token },
+      });
   } catch (error) {
     next(error);
   }
