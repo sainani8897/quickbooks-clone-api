@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema(
     },
     vendor_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "vendors",
+      ref: "Vendor",
     },
     units_of_measurement: {
       type: String,
