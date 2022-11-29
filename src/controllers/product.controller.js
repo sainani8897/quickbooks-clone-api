@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['created_by','vendor_id']
+      populate: ['created_by','vendor_id','category_id']
     };
 
     const query = req.query;

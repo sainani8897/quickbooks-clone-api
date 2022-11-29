@@ -40,7 +40,8 @@ const productSchema = new mongoose.Schema(
       type: String,
     },
     category_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
     },
     dimension_unit: {
       type: String,
