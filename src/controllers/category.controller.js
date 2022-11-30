@@ -8,7 +8,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { date: -1 },
-      populate: ["icon"],
+      populate: ["parent_id"],
     };
     const query = req.query;
 
