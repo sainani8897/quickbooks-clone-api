@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
+const Invoice = require("./Invoice");
 
 const paymentSchema = new mongoose.Schema(
     {
@@ -21,12 +22,19 @@ const paymentSchema = new mongoose.Schema(
         invoice: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Invoice",
-            required:true
+        },
+        bill: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Bill",
         },
         customer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Customer",
             required:true
+        },
+        type:{
+            type:String, 
+            default:Invoice,
         },
         tax: Number,
         deposit_to: String,

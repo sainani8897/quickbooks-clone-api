@@ -34,7 +34,7 @@ const billSchema = new mongoose.Schema(
     items: [mongoose.Schema.Types.Mixed],
     status: {
       type: String,
-      default: 'Order Created',
+      default: 'Bill Created',
       required: true,
     },
     description: {
