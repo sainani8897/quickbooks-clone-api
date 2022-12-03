@@ -55,17 +55,20 @@ exports.create = async function (req, res, next) {
     //  console.log(req.body.payload);
   
     const product = await SalesOder.create({
-     order_no:payload.order_no,
-     sale_date:payload.sale_date,
-     shipment_date:payload.shipment_date,
-     customer_id:payload.customer_id,
-     sales_executives:payload.sales_executives,
-     items:payload.items,
-     sale_details:payload.sale_details,
-     customer_comments:payload.customer_comments,
-     status:payload.status,
-     created_by: req.user._id,
-     org_id: req.user.org_id
+      order_no:payload.order_no,
+      sale_date:payload.sale_date,
+      shipment_date:payload.shipment_date,
+      customer_id:payload.customer_id,
+      sales_executives:payload.sales_executives,
+      items:payload.items,
+      sale_details:payload.sale_details,
+      customer_comments:payload.customer_comments,
+      status:payload.status,
+      created_by: req.user._id,
+      org_id: req.user.org_id,
+      reference: payload.reference,
+      shipping_notes: payload.shipping_notes,
+      customer_notes: payload.notes
     });
     
     if (Array.isArray(payload.files)) {
