@@ -5,6 +5,7 @@ const routes = require("./routes");
 const models = require("./database/Models");
 const { connectDb } = require("./config/database");
 const cors = require("cors");
+const path = require('path')
 
 /** CROS */
 app.use(cors({
@@ -18,6 +19,9 @@ app.use(cors({
 /** Body Parser */
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+/** Initilizing Static  files*/
+app.use('/public', express.static(path.join(__dirname, 'public')))
 
 /** Intilizing the routes here */
 app.use("/api/v1", routes);

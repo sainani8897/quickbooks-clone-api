@@ -1,6 +1,7 @@
 const { MediaManager } = require("../database/Models");
 const { NotFoundException } = require("../exceptions");
 const fs = require('fs');
+const {disks}  = require("../config/filesystem")
 
 exports.index = async function (req, res, next) {
   try {
@@ -58,12 +59,11 @@ exports.create = async function (req, res, next) {
     /** Basic Form */
     const payload = req.body.payload;
 
-    //console.log(req);
-
     /** Create */
     const media_manager = await MediaManager.create({
       name: req.file.originalname,
-      url: req.file.path,
+      url: 'storage/files/'+req.file.filename,
+      full_url: disks.public.url+'/storage/files/'+req.file.filename,
       created_by: req.user._id,
     });
 
