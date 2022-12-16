@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['created_by','customer_id','sales_executives']
+      populate: ['created_by','customer_id','sales_executives','docs']
     };
 
     const query = req.query;
@@ -71,10 +71,10 @@ exports.create = async function (req, res, next) {
       customer_notes: payload.notes
     });
     
-    if (Array.isArray(payload.files)) {
-      /** Files */
-      payload.files.forEach((file) => {
-        product.files.push(file);
+    if (Array.isArray(payload.docs)) {
+      /** docs */
+      payload.docs.forEach((file) => {
+        product.docs.push(file);
       });
 
       (await product).save();
@@ -118,17 +118,16 @@ exports.update = async function (req, res, next) {
       reference: payload.reference,
       shipping_notes: payload.shipping_notes,
       customer_notes: payload.notes
-
     });
 
     /** Delete  */
-    if (Array.isArray(payload.files)) {
-      /** Files */
-      payload.files.forEach((file) => {
-        document.files.push(file);
+    if (Array.isArray(payload.docs)) {
+      /** docs */
+      payload.docs.forEach((file) => {
+        order.docs.push(file);
       });
 
-      (await document).save();
+      await order.save();
     }
 
     return res.send({
