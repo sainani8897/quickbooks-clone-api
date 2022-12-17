@@ -1,7 +1,7 @@
 const { MediaManager } = require("../database/Models");
 const { NotFoundException } = require("../exceptions");
-const fs = require('fs');
-const {disks}  = require("../config/filesystem")
+const fs = require("fs");
+const { disks } = require("../config/filesystem");
 
 exports.index = async function (req, res, next) {
   try {
@@ -10,7 +10,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { date: -1 },
-      populate:['created_by']
+      populate: ["created_by"],
     };
 
     const query = req.query;
@@ -62,15 +62,15 @@ exports.create = async function (req, res, next) {
     /** Create */
     const media_manager = await MediaManager.create({
       name: req.file.originalname,
-      url: 'storage/files/'+req.file.filename,
-      full_url: disks.public.url+'/storage/files/'+req.file.filename,
+      url: disks.local.root + "/files/" + req.file.filename,
+      full_url: disks.public.url + "/storage/files/" + req.file.filename,
       created_by: req.user._id,
     });
 
     return res.send({
       status: 200,
       message: "Created Successfully",
-      data: media_manager
+      data: media_manager,
     });
   } catch (error) {
     next(error);
@@ -81,21 +81,19 @@ exports.delete = async function (req, res, next) {
   try {
     const ids = req.body._id;
 
-    ids.forEach((id)=>{
-      if (
-            typeof id !== "undefined" &&
-            !id.match(/^[0-9a-fA-F]{24}$/)
-          ) {
-            return res.send({ status: 404, message: "Not found!" });
-          }
-    })
-  
+    ids.forEach((id) => {
+      if (typeof id !== "undefined" && !id.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.send({ status: 404, message: "Not found!" });
+      }
+    });
 
     /** Delete */
-    const media_managers = await MediaManager.find({
-      _id: ids,
-    },null);
-    console.log(media_managers);
+    const media_managers = await MediaManager.find(
+      {
+        _id: ids,
+      },
+      null
+    );
     if (media_managers.length <= 0) {
       return res.send({
         status: 204,
@@ -103,22 +101,22 @@ exports.delete = async function (req, res, next) {
       });
     }
 
-    media_managers.forEach((media_manager)=>{
+    media_managers.forEach((media_manager) => {
       /** Delete File */
-      fs.unlink(media_manager.url, (err => {
+      // const currDir = path.join(`${__dirname}../${media_manager.url}`);
+      fs.unlink(media_manager.url, (err) => {
         if (err) console.log(err);
         else {
-          console.log("\nDeleted file: example_file.txt");
+          console.log("\nDeleted file: " + media_manager.url);
         }
-      }));
-      media_manager.delete()
+      });
+      media_manager.delete();
     });
 
     return res.send({
       status: 200,
       message: "Deleted Successfully",
     });
-
   } catch (error) {
     next(error);
   }
