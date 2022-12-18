@@ -123,6 +123,7 @@ exports.update = async function (req, res, next) {
     /** Delete  */
     if (Array.isArray(payload.docs)) {
       /** docs */
+      order.docs = [];
       payload.docs.forEach((file) => {
         order.docs.push(file);
       });
