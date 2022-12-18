@@ -23,6 +23,7 @@ exports.authenticateToken = async (req, res, next) => {
     if (!user_data) throw new UnauthorizedException("Unauthoirzed");
     req.user = user_data.user;
     req.token = user_data.token;
+    req.query.org_id = user_data.org_id
     next();
   } catch (error) {
     next(error);
