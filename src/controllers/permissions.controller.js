@@ -11,8 +11,8 @@ exports.index = async function (req, res, next) {
       limit: req.query.limit ?? 100,
       sort: { date: -1 }
     };
-
     const query = req.query;
+    delete query.org_id;
     if (
       typeof req.query._id !== "undefined" &&
       !req.query._id.match(/^[0-9a-fA-F]{24}$/)

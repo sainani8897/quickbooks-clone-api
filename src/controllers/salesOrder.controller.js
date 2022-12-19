@@ -2,14 +2,13 @@ const SalesOder = require("../database/Models/SalesOrder");
 const { NotFoundException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
-
   try {
     /** Pagination obj  */
     const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['created_by','customer_id','sales_executives','docs']
+      populate: ["created_by", "customer_id", "sales_executives", "docs"],
     };
 
     const query = req.query;
@@ -28,14 +27,12 @@ exports.index = async function (req, res, next) {
         message: "No Content found",
         data: products,
       });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
 
-
-exports.show = async function (req, res, next) {  
+exports.show = async function (req, res, next) {
   const _id = req.params.id;
   try {
     var product = await SalesOder.findById({ _id });
@@ -47,30 +44,28 @@ exports.show = async function (req, res, next) {
   }
 };
 
-
 exports.create = async function (req, res, next) {
   try {
     /** Basic Form */
     const payload = req.body.payload;
     //  console.log(req.body.payload);
-  
     const product = await SalesOder.create({
-      order_no:payload.order_no,
-      sale_date:payload.sale_date,
-      shipment_date:payload.shipment_date,
-      customer_id:payload.customer_id,
-      sales_executives:payload.sales_executives,
-      items:payload.items,
-      sale_details:payload.sale_details,
-      customer_comments:payload.customer_comments,
-      status:payload.status,
+      order_no: payload.order_no,
+      sale_date: payload.sale_date,
+      shipment_date: payload.shipment_date,
+      customer_id: payload.customer_id,
+      sales_executives: payload.sales_executives,
+      items: payload.items,
+      sale_details: payload.sale_details,
+      customer_comments: payload.customer_comments,
+      status: payload.status,
       created_by: req.user._id,
       org_id: req.user.org_id,
       reference: payload.reference,
       shipping_notes: payload.shipping_notes,
-      customer_notes: payload.notes
+      customer_notes: payload.notes,
     });
-    
+
     if (Array.isArray(payload.docs)) {
       /** docs */
       payload.docs.forEach((file) => {
@@ -89,7 +84,6 @@ exports.create = async function (req, res, next) {
   }
 };
 
-
 exports.update = async function (req, res, next) {
   try {
     /** Basic Form */
@@ -104,20 +98,20 @@ exports.update = async function (req, res, next) {
     if (!order)
       return res.send({ status: 404, message: "No data found", data: {} });
     const result = await order.update({
-      order_no:payload.order_no,
-      sale_date:payload.sale_date,
-      shipment_date:payload.shipment_date,
-      customer_id:payload.customer_id,
-      sales_executives:payload.sales_executives,
-      items:payload.items,
-      sale_details:payload.sale_details,
-      customer_comments:payload.customer_comments,
-      status:payload.status,
+      order_no: payload.order_no,
+      sale_date: payload.sale_date,
+      shipment_date: payload.shipment_date,
+      customer_id: payload.customer_id,
+      sales_executives: payload.sales_executives,
+      items: payload.items,
+      sale_details: payload.sale_details,
+      customer_comments: payload.customer_comments,
+      status: payload.status,
       created_by: req.user._id,
       org_id: req.user.org_id,
       reference: payload.reference,
       shipping_notes: payload.shipping_notes,
-      customer_notes: payload.notes
+      customer_notes: payload.notes,
     });
 
     /** Delete  */
@@ -139,7 +133,6 @@ exports.update = async function (req, res, next) {
     next(error);
   }
 };
-
 
 exports.delete = async function (req, res, next) {
   try {
