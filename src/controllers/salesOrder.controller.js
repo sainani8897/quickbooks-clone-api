@@ -1,5 +1,7 @@
 const SalesOder = require("../database/Models/SalesOrder");
-const { NotFoundException } = require("../exceptions");
+const Product = require("../database/Models/Product");
+const { NotFoundException, ValidationException } = require("../exceptions");
+const { pluck } = require("../helpers/helperFunctions");
 
 exports.index = async function (req, res, next) {
   try {
@@ -49,6 +51,32 @@ exports.create = async function (req, res, next) {
     /** Basic Form */
     const payload = req.body.payload;
     //  console.log(req.body.payload);
+    const items = await Product.find({
+      _id: { $in: pluck(payload?.items, "product_id") },
+    });
+
+    if (items) {
+      payload?.items.forEach((value, key) => {
+        console.log("val", value);
+        let prod = items.find((search) => {
+          return search._id == value.product_id;
+        });
+
+        if (!prod) {
+          throw new ValidationException(`Product not found!`);
+        }
+
+        console.log("this is prod==", prod);
+        if (prod.qty < value.qty) {
+          throw new ValidationException(
+            `The Selected ${prod.name} is Out of stock`
+          );
+        }
+        prod.qty = parseInt(prod.qty - value.qty);
+        prod.save();
+      });
+    }
+
     const product = await SalesOder.create({
       order_no: payload.order_no,
       sale_date: payload.sale_date,
@@ -89,14 +117,47 @@ exports.update = async function (req, res, next) {
     /** Basic Form */
     const payload = req.body.payload;
     const _id = payload._id;
-    console.log(_id);
-    if (typeof _id !== "undefined" && !_id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.send({ status: 404, message: "Not found!" });
-    }
+    const items = await Product.find({
+      _id: { $in: pluck(payload?.items, "product_id") },
+    });
 
     var order = await SalesOder.findById({ _id });
     if (!order)
       return res.send({ status: 404, message: "No data found", data: {} });
+
+    console.log("Order:::::", order.items);
+
+    if (items) {
+      payload?.items.forEach((value, key) => {
+        let prod = items.find((search) => {
+          return search._id == value.product_id;
+        });
+
+        let orderedItem = order?.items?.find((search) => {
+          return search.product_id == value.product_id;
+        });
+        if (!prod || !orderedItem) {
+          throw new ValidationException(`Product not found!`);
+        }
+        /** CALCULATE Actual  */
+        const actualQty =  value.qty - orderedItem.qty 
+        // update the new Qty strock
+        const renewed_qty = prod.qty - actualQty;
+        console.log("Act",renewed_qty);
+        if (renewed_qty < 0) {
+          throw new ValidationException(
+            `The Selected ${prod.name} is Out of stock`
+          );
+        }
+        prod.qty = parseInt(renewed_qty);
+        prod.save();
+      });
+    }
+
+    if (typeof _id !== "undefined" && !_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.send({ status: 404, message: "Not found!" });
+    }
+
     const result = await order.update({
       order_no: payload.order_no,
       sale_date: payload.sale_date,

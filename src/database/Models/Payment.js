@@ -34,7 +34,7 @@ const paymentSchema = new mongoose.Schema(
         },
         type:{
             type:String, 
-            default:Invoice,
+            default:"Invoice",
         },
         tax: Number,
         deposit_to: String,
