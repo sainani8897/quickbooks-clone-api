@@ -57,7 +57,6 @@ exports.create = async function (req, res, next) {
 
     if (items) {
       payload?.items.forEach((value, key) => {
-        console.log("val", value);
         let prod = items.find((search) => {
           return search._id == value.product_id;
         });
@@ -125,8 +124,6 @@ exports.update = async function (req, res, next) {
     if (!order)
       return res.send({ status: 404, message: "No data found", data: {} });
 
-    console.log("Order:::::", order.items);
-
     if (items) {
       payload?.items.forEach((value, key) => {
         let prod = items.find((search) => {
@@ -140,10 +137,9 @@ exports.update = async function (req, res, next) {
           throw new ValidationException(`Product not found!`);
         }
         /** CALCULATE Actual  */
-        const actualQty =  value.qty - orderedItem.qty 
+        const actualQty = value.qty - orderedItem.qty;
         // update the new Qty strock
         const renewed_qty = prod.qty - actualQty;
-        console.log("Act",renewed_qty);
         if (renewed_qty < 0) {
           throw new ValidationException(
             `The Selected ${prod.name} is Out of stock`
