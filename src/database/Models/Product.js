@@ -111,6 +111,10 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    sales_order: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SalesOrder",
+    },
   },
   { timestamps: true },
   {

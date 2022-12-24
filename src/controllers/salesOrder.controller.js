@@ -2,6 +2,7 @@ const SalesOder = require("../database/Models/SalesOrder");
 const Product = require("../database/Models/Product");
 const { NotFoundException, ValidationException } = require("../exceptions");
 const { pluck } = require("../helpers/helperFunctions");
+const SalesItemsHistory = require("../database/Models/SalesItemsHistory");
 
 exports.index = async function (req, res, next) {
   try {
@@ -54,7 +55,7 @@ exports.create = async function (req, res, next) {
     const items = await Product.find({
       _id: { $in: pluck(payload?.items, "product_id") },
     });
-
+    let saleItems = [];
     if (items) {
       payload?.items.forEach((value, key) => {
         let prod = items.find((search) => {
@@ -72,11 +73,12 @@ exports.create = async function (req, res, next) {
           );
         }
         prod.qty = parseInt(prod.qty - value.qty);
-        prod.save();
+        // prod.save();
+        saleItems.push(prod);
       });
     }
 
-    const product = await SalesOder.create({
+    const order = await SalesOder.create({
       order_no: payload.order_no,
       sale_date: payload.sale_date,
       shipment_date: payload.shipment_date,
@@ -93,13 +95,28 @@ exports.create = async function (req, res, next) {
       customer_notes: payload.notes,
     });
 
+    if (saleItems.length > 0) {
+      saleItems.forEach(async (item, key) => {
+        await item.save();
+      });
+    }
+
+    if (payload?.items.length > 0) {
+      payload?.items.forEach(async (item, key) => {
+        item.sales_order = order._id;
+        item.created_by= req.user._id;
+        item.org_id= req.user.org_id;
+        const saleItemHistory = await SalesItemsHistory.create(item);
+      });
+    }
+
     if (Array.isArray(payload.docs)) {
       /** docs */
       payload.docs.forEach((file) => {
-        product.docs.push(file);
+        order.docs.push(file);
       });
 
-      (await product).save();
+      (await order).save();
     }
 
     return res.send({
@@ -116,9 +133,12 @@ exports.update = async function (req, res, next) {
     /** Basic Form */
     const payload = req.body.payload;
     const _id = payload._id;
+    let saleItems = [];
     const items = await Product.find({
       _id: { $in: pluck(payload?.items, "product_id") },
     });
+
+    console.log("items:", items);
 
     var order = await SalesOder.findById({ _id });
     if (!order)
@@ -133,20 +153,32 @@ exports.update = async function (req, res, next) {
         let orderedItem = order?.items?.find((search) => {
           return search.product_id == value.product_id;
         });
-        if (!prod || !orderedItem) {
+
+        if (!prod) {
           throw new ValidationException(`Product not found!`);
         }
-        /** CALCULATE Actual  */
-        const actualQty = value.qty - orderedItem.qty;
-        // update the new Qty strock
-        const renewed_qty = prod.qty - actualQty;
-        if (renewed_qty < 0) {
-          throw new ValidationException(
-            `The Selected ${prod.name} is Out of stock`
-          );
+
+        if (orderedItem) {
+          /** CALCULATE Actual  */
+          const actualQty = value.qty - orderedItem.qty;
+          // update the new Qty strock
+          const renewed_qty = prod.qty - actualQty;
+          if (renewed_qty < 0) {
+            throw new ValidationException(
+              `The Selected ${prod.name} is Out of stock`
+            );
+          }
+          prod.qty = parseInt(renewed_qty);
+        } else {
+          if (prod.qty < value.qty) {
+            throw new ValidationException(
+              `The Selected ${prod.name} is Out of stock`
+            );
+          }
+          prod.qty = parseInt(prod.qty - value.qty);
         }
-        prod.qty = parseInt(renewed_qty);
-        prod.save();
+        // prod.save();
+        saleItems.push(prod);
       });
     }
 
@@ -170,6 +202,21 @@ exports.update = async function (req, res, next) {
       shipping_notes: payload.shipping_notes,
       customer_notes: payload.notes,
     });
+
+    if (saleItems.length > 0) {
+      saleItems.forEach(async (item, key) => {
+        await item.save();
+      });
+    }
+
+    if (payload?.items.length > 0) {
+      payload?.items.forEach(async (item, key) => {
+        item.sales_order = order._id;
+        item.created_by= req.user._id;
+        item.org_id= req.user.org_id;
+        const saleItemHistory = await SalesItemsHistory.create(item);
+      });
+    }
 
     /** Delete  */
     if (Array.isArray(payload.docs)) {
