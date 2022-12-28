@@ -2,14 +2,13 @@ const Product = require("../database/Models/Product");
 const { NotFoundException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
-
   try {
     /** Pagination obj  */
     const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['created_by','vendor_id','category_id']
+      populate: ["created_by", "vendor_id", "category_id"],
     };
 
     const query = req.query;
@@ -19,6 +18,18 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
+
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { name: { $regex: req.query.search } },
+        { sku: { $regex: req.query.search } },
+      ];
+    }
+
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status}
+    }
+
     const products = await Product.paginate(query, options);
     if (products.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: products });
@@ -28,12 +39,10 @@ exports.index = async function (req, res, next) {
         message: "No Content found",
         data: products,
       });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
-
 
 exports.show = async function (req, res, next) {
   const _id = req.params.id;
@@ -47,14 +56,13 @@ exports.show = async function (req, res, next) {
   }
 };
 
-
 exports.create = async function (req, res, next) {
   try {
     /** Basic Form */
     const payload = req.body.payload;
     //  console.log(req.body.payload);
 
-    const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
+    const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-");
     const product = await Product.create({
       name: payload.name,
       slug: slug,
@@ -85,7 +93,7 @@ exports.create = async function (req, res, next) {
       status: payload.status,
       description: payload.description ?? null,
       created_by: req.user._id,
-      org_id: req.user.org_id
+      org_id: req.user.org_id,
     });
     if (Array.isArray(payload.files)) {
       /** Files */
@@ -105,7 +113,6 @@ exports.create = async function (req, res, next) {
   }
 };
 
-
 exports.update = async function (req, res, next) {
   try {
     /** Basic Form */
@@ -119,7 +126,7 @@ exports.update = async function (req, res, next) {
     var product = await Product.findById({ _id });
     if (!product)
       return res.send({ status: 404, message: "No data found", data: {} });
-    const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
+    const slug = payload.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-");
     const result = await product.update({
       name: payload.name,
       slug: slug,
@@ -150,7 +157,7 @@ exports.update = async function (req, res, next) {
       status: payload.status,
       description: payload.description ?? null,
       created_by: req.user._id,
-      org_id: req.user.org_id
+      org_id: req.user.org_id,
     });
 
     /** Delete  */
@@ -171,7 +178,6 @@ exports.update = async function (req, res, next) {
     next(error);
   }
 };
-
 
 exports.delete = async function (req, res, next) {
   try {
