@@ -19,6 +19,26 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
+     /** Filters added */
+     if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { name: { $regex: req.query.search } },
+        { display_name: { $regex: req.query.search } },
+        { email: { $regex: req.query.search } },
+        { mobile: { $regex: req.query.search } },
+        { company_name: { $regex: req.query.search } },
+        { company_email: { $regex: req.query.search } },
+        { company_phone: { $regex: req.query.search } },
+        { alt_email: { $regex: req.query.search } },
+        { alt_phone: { $regex: req.query.search } },
+        { pan: { $regex: req.query.search } },
+        { gst: { $regex: req.query.search } },
+        { customer_type: { $regex: req.query.search } },
+      ];
+    }
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status };
+    }
     const customers = await Customer.paginate(query, options);
     if (customers.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: customers });

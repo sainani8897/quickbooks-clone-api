@@ -21,7 +21,25 @@ exports.index = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
     query.org_id = req.user.org_id;
-    // console.log(query);
+
+    /** Filters added */
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { first_name: { $regex: req.query.search } },
+        { last_name: { $regex: req.query.search } },
+        { email: { $regex: req.query.search } },
+        { phone_number: { $regex: req.query.search } },
+        { company_name: { $regex: req.query.search } },
+        { company_phone: { $regex: req.query.search } },
+        { alt_email: { $regex: req.query.search } },
+        { alt_phone: { $regex: req.query.search } },
+        { gst: { $regex: req.query.search } },
+      ];
+    }
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status };
+    }
+    
     const vendors = await Vendor.paginate(query, options);
     if (vendors.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: vendors });
@@ -57,7 +75,7 @@ exports.create = async function (req, res, next) {
       display_name: payload.display_name,
       first_name: payload.first_name,
       last_name: payload.last_name,
-      saluation:payload.saluation,
+      saluation: payload.saluation,
       email: payload.email,
       phone_number: payload.phone_number,
       company_name: payload.company_name,
@@ -65,7 +83,7 @@ exports.create = async function (req, res, next) {
       status: payload.status,
       org_id: req.user.org_id,
       created_by: req.user._id,
-      saluation:payload.saluation,
+      saluation: payload.saluation,
       company_email: payload.company_email,
       company_phone: payload.company_phone,
       alt_phone: payload.alt_phone,
@@ -75,7 +93,7 @@ exports.create = async function (req, res, next) {
       contacts: payload.contacts,
       notes: payload.notes,
       // profile: payload.profile,
-      social_info:{
+      social_info: {
         whatsapp: payload.whatsapp,
         instagram: payload.instagram,
         twitter: payload.twitter,
@@ -84,7 +102,6 @@ exports.create = async function (req, res, next) {
       },
       address: payload.address,
       shiping_address: payload.shiping_address,
-
     });
 
     return res.send({
@@ -114,7 +131,7 @@ exports.update = async function (req, res, next) {
       display_name: payload.display_name,
       first_name: payload.first_name,
       last_name: payload.last_name,
-      saluation:payload.saluation,
+      saluation: payload.saluation,
       email: payload.email,
       phone_number: payload.phone_number,
       company_name: payload.company_name,
@@ -122,7 +139,7 @@ exports.update = async function (req, res, next) {
       status: payload.status,
       org_id: req.user.org_id,
       created_by: req.user._id,
-      saluation:payload.saluation,
+      saluation: payload.saluation,
       company_email: payload.company_email,
       company_phone: payload.company_phone,
       alt_phone: payload.alt_phone,
@@ -132,7 +149,7 @@ exports.update = async function (req, res, next) {
       contacts: payload.contacts,
       notes: payload.notes,
       // profile: payload.profile,
-      social_info:{
+      social_info: {
         whatsapp: payload.whatsapp,
         instagram: payload.instagram,
         twitter: payload.twitter,

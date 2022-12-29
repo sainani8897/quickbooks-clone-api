@@ -20,6 +20,18 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
+    /** Filters added */
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { name: { $regex: req.query.search } },
+        { email: { $regex: req.query.search } },
+        { phone_number: { $regex: req.query.search } },
+      ];
+    }
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status}
+    }
+    
     const users = await User.paginate(query, options);
     if (users.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: users });
