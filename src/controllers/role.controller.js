@@ -25,6 +25,14 @@ exports.index = async function (req, res, next) {
       query.name = { $ne: 'super_admin' } 
     }
 
+    /** Filters added */
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { name: { $regex: req.query.search } },
+        { display_text: { $regex: req.query.search } }
+      ];
+    }
+
     console.log(query);
 
     const roles = await Role.paginate(query, options);

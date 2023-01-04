@@ -19,8 +19,9 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
-     /** Filters added */
-     if (req.query?.search && req.query?.search != "") {
+    
+    /** Filters added */
+    if (req.query?.search && req.query?.search != "") {
       query.$or = [
         { name: { $regex: req.query.search } },
         { display_name: { $regex: req.query.search } },
@@ -36,6 +37,7 @@ exports.index = async function (req, res, next) {
         { customer_type: { $regex: req.query.search } },
       ];
     }
+
     if (req.query?.status && Array.isArray(req.query?.status)) {
       query.status = { $in: req.query?.status };
     }
@@ -72,10 +74,10 @@ exports.create = async function (req, res, next) {
     // console.log(req.body.payload);
     const customer = await Customer.create({
       first_name: payload.first_name,
-      last_name:payload.last_name,
-      saluation:payload.saluation,
-      customer_type:payload.customer_type,
-      name: payload.first_name+' '+payload.last_name,
+      last_name: payload.last_name,
+      saluation: payload.saluation,
+      customer_type: payload.customer_type,
+      name: payload.first_name + " " + payload.last_name,
       display_name: payload.display_name,
       email: payload.email,
       mobile: payload.mobile,
@@ -88,7 +90,7 @@ exports.create = async function (req, res, next) {
       gst: payload.gst,
       contacts: payload.contacts,
       // profile: payload.profile,
-      social_info:{
+      social_info: {
         whatsapp: payload.whatsapp,
         instagram: payload.instagram,
         twitter: payload.twitter,
@@ -97,7 +99,7 @@ exports.create = async function (req, res, next) {
       },
       address: payload.address,
       status: payload.status,
-      org_id:req.user.org_id
+      org_id: req.user.org_id,
     });
 
     return res.send({
@@ -127,10 +129,10 @@ exports.update = async function (req, res, next) {
 
     const result = await customer.update({
       first_name: payload.first_name,
-      last_name:payload.last_name,
-      saluation:payload.saluation,
-      customer_type:payload.customer_type,
-      name: payload.first_name+' '+payload.last_name,
+      last_name: payload.last_name,
+      saluation: payload.saluation,
+      customer_type: payload.customer_type,
+      name: payload.first_name + " " + payload.last_name,
       display_name: payload.display_name,
       email: payload.email,
       mobile: payload.mobile,
@@ -142,9 +144,9 @@ exports.update = async function (req, res, next) {
       pan: payload.pan,
       gst: payload.gst,
       contacts: payload.contacts,
-      notes:payload.notes,
+      notes: payload.notes,
       // profile: payload.profile,
-      social_info:{
+      social_info: {
         whatsapp: payload.whatsapp,
         instagram: payload.instagram,
         twitter: payload.twitter,
@@ -154,7 +156,7 @@ exports.update = async function (req, res, next) {
       address: payload.address,
       shiping_address: payload.shiping_address,
       status: payload.status,
-      org_id:req.user.org_id
+      org_id: req.user.org_id,
     });
 
     return res.send({

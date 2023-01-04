@@ -2,14 +2,13 @@ const Package = require("../database/Models/Package");
 const { NotFoundException } = require("../exceptions");
 
 exports.index = async function (req, res, next) {
-
   try {
     /** Pagination obj  */
     const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['sales_order','package.product_id']
+      populate: ["sales_order", "package.product_id"],
     };
 
     const query = req.query;
@@ -19,6 +18,36 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { package_slip: { $regex: req.query.search } },
+        // {
+        //   $lookup: {
+        //     from: "sales_orders",
+        //     localField: "sales_order",
+        //     foreignField:"_id",
+        //     as:"sales_order_rel",
+        //     pipeline: [
+        //       {
+        //         $search: {
+        //           order_no: {},
+        //         },
+        //       },
+        //     ],
+        //   },
+        // },
+        // { "sales_order._id": { $regex: req.query.search } },
+        // { sales_order: { $regex: req.query.search } },
+        { package_notes: { $regex: req.query.search } },
+        { status: { $regex: req.query.search } },
+        // { _id: { $regex: req.query.search } },
+      ];
+    }
+
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status };
+    }
+
     const packages = await Package.paginate(query, options);
     if (packages.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: packages });
@@ -28,14 +57,13 @@ exports.index = async function (req, res, next) {
         message: "No Content found",
         data: packages,
       });
-  }
-  catch (error) {
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 };
 
-
-exports.show = async function (req, res, next) {  
+exports.show = async function (req, res, next) {
   const _id = req.params.id;
   try {
     var package = await Package.findById({ _id });
@@ -47,26 +75,25 @@ exports.show = async function (req, res, next) {
   }
 };
 
-
 exports.create = async function (req, res, next) {
   try {
     /** Basic Form */
     const payload = req.body.payload;
     //  console.log(req.body.payload);
-  
+
     const product = await Package.create({
-     package_slip:payload.package_slip,
-     date:payload.date,
-     status:payload.status,
-     sales_order:payload.sales_order,
-     package:payload.package,
-     package_notes:payload.package_notes,
-     shipping_notes:payload.shipping_notes,
-     status:payload.status,
-     created_by: req.user._id,
-     org_id: req.user.org_id
+      package_slip: payload.package_slip,
+      date: payload.date,
+      status: payload.status,
+      sales_order: payload.sales_order,
+      package: payload.package,
+      package_notes: payload.package_notes,
+      shipping_notes: payload.shipping_notes,
+      status: payload.status,
+      created_by: req.user._id,
+      org_id: req.user.org_id,
     });
-    
+
     if (Array.isArray(payload.files)) {
       /** Files */
       payload.files.forEach((file) => {
@@ -85,7 +112,6 @@ exports.create = async function (req, res, next) {
   }
 };
 
-
 exports.update = async function (req, res, next) {
   try {
     /** Basic Form */
@@ -100,17 +126,16 @@ exports.update = async function (req, res, next) {
     if (!order)
       return res.send({ status: 404, message: "No data found", data: {} });
     const result = await order.update({
-      package_slip:payload.package_slip,
-      date:payload.date,
-      status:payload.status,
-      sales_order:payload.sales_order,
-      package:payload.package,
-      package_notes:payload.package_notes,
-      shipping_notes:payload.shipping_notes,
-      status:payload.status,
+      package_slip: payload.package_slip,
+      date: payload.date,
+      status: payload.status,
+      sales_order: payload.sales_order,
+      package: payload.package,
+      package_notes: payload.package_notes,
+      shipping_notes: payload.shipping_notes,
+      status: payload.status,
       created_by: req.user._id,
-      org_id: req.user.org_id
-
+      org_id: req.user.org_id,
     });
 
     /** Delete  */
@@ -131,7 +156,6 @@ exports.update = async function (req, res, next) {
     next(error);
   }
 };
-
 
 exports.delete = async function (req, res, next) {
   try {

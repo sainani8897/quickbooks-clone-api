@@ -21,6 +21,41 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
+    /** Filters added */
+    if (req.query?.search && req.query?.search != "") {
+      
+      options.populate[1] = {
+        path: "customer_id",
+        match: {
+          // $or: [
+          //   { name: { $regex: req.query.search } },
+          //   { display_name: { $regex: req.query.search } },
+          //   { email: { $regex: req.query.search } },
+          //   { mobile: { $regex: req.query.search } },
+          //   { company_name: { $regex: req.query.search } },
+          //   { company_email: { $regex: req.query.search } },
+          //   { company_phone: { $regex: req.query.search } },
+          //   { alt_email: { $regex: req.query.search } },
+          //   { alt_phone: { $regex: req.query.search } },
+          //   { pan: { $regex: req.query.search } },
+          //   { gst: { $regex: req.query.search } },
+          //   { customer_type: { $regex: req.query.search } },
+          // ],
+        },
+      };
+
+      query.$or = [
+        { order_no: { $regex: req.query.search } },
+        { "customer_id.name": { $regex: req.query.search } },
+        { status: { $regex: req.query.search } },
+      ];
+
+      query.customer_id = { $ne: null } ;
+    }
+
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status };
+    }
     const products = await SalesOder.paginate(query, options);
     if (products.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: products });
@@ -104,8 +139,8 @@ exports.create = async function (req, res, next) {
     if (payload?.items.length > 0) {
       payload?.items.forEach(async (item, key) => {
         item.sales_order = order._id;
-        item.created_by= req.user._id;
-        item.org_id= req.user.org_id;
+        item.created_by = req.user._id;
+        item.org_id = req.user.org_id;
         const saleItemHistory = await SalesItemsHistory.create(item);
       });
     }
@@ -186,6 +221,28 @@ exports.update = async function (req, res, next) {
       return res.send({ status: 404, message: "Not found!" });
     }
 
+    /** Filters added */
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { order_no: { $regex: req.query.search } },
+        { sale_date: { $regex: req.query.search } },
+        { email: { $regex: req.query.search } },
+        { mobile: { $regex: req.query.search } },
+        { company_name: { $regex: req.query.search } },
+        { company_email: { $regex: req.query.search } },
+        { company_phone: { $regex: req.query.search } },
+        { alt_email: { $regex: req.query.search } },
+        { alt_phone: { $regex: req.query.search } },
+        { pan: { $regex: req.query.search } },
+        { gst: { $regex: req.query.search } },
+        { customer_type: { $regex: req.query.search } },
+      ];
+    }
+
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status };
+    }
+
     const result = await order.update({
       order_no: payload.order_no,
       sale_date: payload.sale_date,
@@ -212,8 +269,8 @@ exports.update = async function (req, res, next) {
     if (payload?.items.length > 0) {
       payload?.items.forEach(async (item, key) => {
         item.sales_order = order._id;
-        item.created_by= req.user._id;
-        item.org_id= req.user.org_id;
+        item.created_by = req.user._id;
+        item.org_id = req.user.org_id;
         const saleItemHistory = await SalesItemsHistory.create(item);
       });
     }

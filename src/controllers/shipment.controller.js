@@ -19,6 +19,21 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
+
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { shipment_no: { $regex: req.query.search } },
+        { shipping_type: { $regex: req.query.search } },
+        { tracking_no: { $regex: req.query.search } },
+        { status: { $regex: req.query.search } },
+      ];
+    }
+
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status}
+    }
+
+
     const shipments = await Shipment.paginate(query, options);
     if (shipments.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: shipments });
