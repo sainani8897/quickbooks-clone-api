@@ -37,6 +37,10 @@ const billSchema = new mongoose.Schema(
       default: 'Bill Created',
       required: true,
     },
+    payment: {
+      type: String,
+      default: "Un-paid",
+    },
     description: {
       type: String,
     },
