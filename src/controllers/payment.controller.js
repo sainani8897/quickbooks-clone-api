@@ -21,6 +21,22 @@ exports.index = async function (req, res, next) {
     ) {
       return res.send({ status: 404, message: "Not found!" });
     }
+    if (req.query?.search && req.query?.search != "") {
+      query.$or = [
+        { payment_mode: { $regex: req.query.search } },
+        { payment_no: { $regex: req.query.search } },
+        { status: { $regex: req.query.search } },
+        { payment_type: { $regex: req.query.search } },
+      ];
+    }
+
+    if (req.query?.status && Array.isArray(req.query?.status)) {
+      query.status = { $in: req.query?.status };
+    }
+    if (req.query?.payment_type && Array.isArray(req.query?.payment_type)) {
+      query.payment_type = { $in: req.query?.payment_type };
+    }
+
     const payments = await Payment.paginate(query, options);
     if (payments.totalDocs > 0)
       return res.send({ status: 200, message: "Data found", data: payments });
@@ -154,13 +170,13 @@ exports.update = async function (req, res, next) {
     const result = await order.update({
       payment_date: payload.payment_date,
       payment_mode: payload.payment_mode,
-      payment_type: payload.payment_type,
+      // payment_type: payload.payment_type,
       deposit_to: payload.deposit_to,
-      status: payload.status,
+      // status: payload.status,
       notes: payload.notes,
-      reference: payload.reference,
-      payable: payload.reference,
-      onModel: payload.onModel,
+      // reference: payload.reference,
+      // payable: payload.reference,
+      // onModel: payload.onModel,
     });
 
     /** Delete  */
