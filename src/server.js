@@ -6,6 +6,7 @@ const models = require("./database/Models");
 const { connectDb } = require("./config/database");
 const cors = require("cors");
 const path = require('path')
+const {main} = require('./schedulars')
 
 /** CROS */
 app.use(cors({
@@ -25,6 +26,11 @@ app.use('/public', express.static(path.join(__dirname, 'public')))
 
 /** Intilizing the routes here */
 app.use("/api/v1", routes);
+
+/** Intilzing the schedulars */
+main().then(()=>{
+  console.log("sadf");
+})
 
 /** global error handler */
 app.use(function (err, req, res, next) {
