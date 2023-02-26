@@ -12,7 +12,8 @@ exports.signup = (req, res, next) => {
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      console.log(Object.values(err)[0]);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -26,7 +27,7 @@ exports.login = (req, res, next) => {
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -51,7 +52,7 @@ exports.userRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -66,7 +67,7 @@ exports.changePassword = (req, res, next) => {
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -130,7 +131,7 @@ exports.myInvestments = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -151,7 +152,7 @@ exports.mediaManager = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -176,7 +177,7 @@ exports.documentRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -197,7 +198,7 @@ exports.roleRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -226,7 +227,7 @@ exports.myCustomers = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -250,7 +251,7 @@ exports.myCategories = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -269,7 +270,7 @@ exports.myTaxes = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -299,7 +300,7 @@ exports.myProducts = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -336,7 +337,7 @@ exports.vendorRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -373,7 +374,7 @@ exports.saleOrderRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -409,7 +410,7 @@ exports.purchaseOrderRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -439,7 +440,7 @@ exports.packageRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -467,7 +468,7 @@ exports.shipmentRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -504,7 +505,7 @@ exports.invoiceRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -535,7 +536,7 @@ exports.paymentRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -572,7 +573,7 @@ exports.billRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
@@ -604,7 +605,7 @@ exports.receivableRules = (req, res, next) => {
 
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
-      throw new ValidationException("Validation Failed", err);
+      throw new ValidationException(Object.values(err.all())[0][0] ?? "Validation Failed Bad Request!", err);
     } else {
       next();
     }
