@@ -29,7 +29,7 @@ app.use("/api/v1", routes);
 
 /** Intilzing the schedulars */
 main().then(()=>{
-  console.log("sadf");
+  console.log("Redis Schedulars!");
 })
 
 /** global error handler */
@@ -56,11 +56,11 @@ app.use(function (err, req, res, next) {
  *
  */
 connectDb()
-  .then(async () => {
+  .then(() => {
     app.listen(port, () => {
-      console.log(` Server Started Running at http://localhost:${port}`);
+      console.log(`Server Started Running at http://localhost:${port}`);
     });
   })
   .catch((err) => {
-    console.error("Could not Able to connent to DB! Server not Started!");
+    console.error("Could not Able to connent to DB! Server not Started!",err);
   });

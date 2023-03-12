@@ -3,45 +3,63 @@ const {
   PersonalAccessTokens,
   Organization,
   Role,
+  Permission,
 } = require("../database/Models");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const { required_with } = require("validatorjs/src/lang/en");
+const { pluck } = require("../helpers/helperFunctions");
 
 exports.login = async function (req, res, next) {
-  await User.findByLogin(req.body)
-    .then((user) => {
-      const token = jwt.sign({ data: user._id }, process.env.APP_KEY, {
-        expiresIn: "5d",
-      });
+  const user = await User.findByLogin(req.body);
+  let permissionsArray = [];
+  let permissions = [];
 
-      const refresh_token = crypto
-        .createHash("sha256", process.env.API_KEY)
-        .update(token)
-        .digest("hex");
-      user.refresh_token = refresh_token;
+  const token = jwt.sign({ data: user._id }, process.env.APP_KEY, {
+    expiresIn: "5d",
+  });
 
-      const personal_token = PersonalAccessTokens.create({
-        token,
-        refresh_token,
-        user: user._id,
-      }).then((data) => {
-        user.tokens.push(data);
-        user.save();
-      });
-      res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token,
-        user,
-      });
-    })
-    .catch((err) => {
-      next(err);
+  if (user.roles && Array.isArray(user.roles)) {
+    let arr = [];
+    user?.roles?.forEach((role) => {
+      permissionsArray = arr.concat(role.permissions);
     });
+    console.log(permissionsArray);
+    const allPermissionsTemp = await Permission.find({
+      _id: permissionsArray,
+    });
+    permissions = pluck(allPermissionsTemp, "name");
+  }
+
+  const refresh_token = crypto
+    .createHash("sha256", process.env.API_KEY)
+    .update(token)
+    .digest("hex");
+  user.refresh_token = refresh_token;
+
+  const personal_token = PersonalAccessTokens.create({
+    token,
+    refresh_token,
+    user: user._id,
+  }).then((data) => {
+    user.tokens.push(data);
+    user.save();
+  });
+
+  user.permissions = permissions;
+
+  const customUser = user;
+
+  res.status(200).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    permissions,
+    token,
+    user,
+  });
 };
 
 exports.register = async function (req, res, next) {
@@ -76,13 +94,11 @@ exports.register = async function (req, res, next) {
       user: user._id,
     });
     await user.save();
-    res
-      .status(200)
-      .json({
-        status: 200,
-        message: "Created Successfully",
-        data: { _id: user._id, name: user.name, email: user.email, token },
-      });
+    res.status(200).json({
+      status: 200,
+      message: "Created Successfully",
+      data: { _id: user._id, name: user.name, email: user.email, token },
+    });
   } catch (error) {
     next(error);
   }
@@ -102,6 +118,8 @@ exports.logout = async function (req, res, next) {
 exports.refreshToken = async function (req, res, next) {
   try {
     const refresh_token = req.body.refresh_token;
+    let permissionsArray = [];
+    let permissions = [];
 
     if (refresh_token == null || refresh_token == "") {
       return res
@@ -109,8 +127,9 @@ exports.refreshToken = async function (req, res, next) {
         .json({ status: 400, message: "Refresh token not given!" });
     }
 
-    const user = await User.findOne({ refresh_token: refresh_token });
-    console.log(refresh_token);
+    const user = await User.findOne({ refresh_token: refresh_token }).populate(
+      "roles"
+    );
 
     if (!user) {
       return res.status(404).json({
@@ -119,7 +138,16 @@ exports.refreshToken = async function (req, res, next) {
       });
     }
 
-    // console.log(user);
+    if (user.roles && Array.isArray(user.roles)) {
+      let arr = [];
+      user?.roles?.forEach((role) => {
+        permissionsArray = arr.concat(role.permissions);
+      });
+      const allPermissionsTemp = await Permission.find({
+        _id: permissionsArray,
+      });
+      permissions = pluck(allPermissionsTemp, "name");
+    }
 
     const token = jwt.sign({ data: user._id }, process.env.APP_KEY, {
       expiresIn: "5d",
@@ -131,7 +159,7 @@ exports.refreshToken = async function (req, res, next) {
       .digest("hex");
     user.refresh_token = new_refresh_token;
 
-    const personal_token = PersonalAccessTokens.find({
+    const personal_token = await PersonalAccessTokens.find({
       token,
       refresh_token,
       user: user._id,
@@ -141,7 +169,14 @@ exports.refreshToken = async function (req, res, next) {
 
     return res
       .status(200)
-      .json({ _id: user._id, name: user.name, email: user.email, token, user });
+      .json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token,
+        permissions,
+        user,
+      });
   } catch (error) {
     next(error);
   }

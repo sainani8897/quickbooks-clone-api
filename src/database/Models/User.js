@@ -90,6 +90,10 @@ const userSchema = new mongoose.Schema(
 userSchema.statics.findByLogin = async function ({ email, password }) {
   let user = await this.findOne({
     email,
+  }).populate({
+    path: 'roles',
+    // Get friends of friends - populate the 'friends' array for every friend
+   // populate: { path: 'premissions' }
   });
   if (user) {
     const match = await bcrypt.compare(password, user.password);
@@ -97,7 +101,6 @@ userSchema.statics.findByLogin = async function ({ email, password }) {
       return user;
     }
   }
-
   throw new UnauthorizedException(
     "Invalid Login Email & Password do not match!"
   );
