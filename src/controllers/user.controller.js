@@ -71,6 +71,9 @@ exports.create = async function (req, res, next) {
         start_date: req.body.start_date,
         end_date: req.body.end_date,
         status: req.body.status,
+        phone_number:req.body.phone,
+        // created_by: req.user._id,
+        org_id: req.user.org_id
       }
     )
     return res.send({

@@ -8,7 +8,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ["created_by", "vendor_id", "category_id"],
+      populate: ["created_by", "vendor_id", "category_id","files"],
     };
 
     const query = req.query;
@@ -164,10 +164,10 @@ exports.update = async function (req, res, next) {
     if (Array.isArray(payload.files)) {
       /** Files */
       payload.files.forEach((file) => {
-        document.files.push(file);
+        product.files.push(file);
       });
 
-      (await document).save();
+      (await product).save();
     }
 
     return res.send({

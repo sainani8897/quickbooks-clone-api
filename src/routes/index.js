@@ -28,6 +28,7 @@ const payment = require("./payment");
 const bill = require("./bill");
 const receivables = require("./receivables");
 const dashboard = require("./dashboard");
+const pointOfSale = require("./pointOfSale");
 
 
 /** Home Route */
@@ -118,6 +119,10 @@ Routes.use("/receivables", authenticateToken, receivables);
 
 /* Receivable Controller */
 Routes.use("/dashboard", authenticateToken, dashboard);
+
+/* Point of Sale */
+Routes.use("/pos", authenticateToken, pointOfSale);
+
 
 
 module.exports = Routes;
