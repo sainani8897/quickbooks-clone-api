@@ -19,6 +19,7 @@ const pointOfSaleSchema = new mongoose.Schema(
     customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
+      required: true
     },
     sales_executives: [{
       type: mongoose.Schema.Types.ObjectId,

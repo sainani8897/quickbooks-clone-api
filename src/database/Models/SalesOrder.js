@@ -10,6 +10,14 @@ const salesOrderSchema = new mongoose.Schema(
     reference: {
       type: String,
     },
+    source_type:{
+      type: String,
+      default:"Sales Order"
+    },
+    pos:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PointOfSale",
+    },
     sale_date: {
       type: Date,
     },
@@ -38,7 +46,6 @@ const salesOrderSchema = new mongoose.Schema(
       rate: String,
       amount: String,
       qty: String
-
     }],
     status: {
       type: String,
@@ -68,6 +75,7 @@ const salesOrderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+
   },
   { timestamps: true },
   {

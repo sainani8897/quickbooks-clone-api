@@ -383,9 +383,9 @@ exports.saleOrderRules = (req, res, next) => {
 
 exports.pointOfSale = (req, res, next) => {
   let validationRule = {
-    "payload.order_no": "required",
-    "payload.sale_date": "required|date",
-    "payload.shipment_date": "required|date",
+    //"payload.order_no": "required",
+    //"payload.sale_date": "required|date",
+    //"payload.shipment_date": "required|date",
     "payload.customer_id": "required",
     // "payload.sales_executives": "required|array",
     "payload.items": "required|array",

@@ -145,3 +145,38 @@ exports.delete = async function (req, res, next) {
     next(error);
   }
 };
+
+exports.createRootCategory = async function (req, res, next) {
+  try {
+    /** Basic Form */
+    rootCategory = await Category.findOne({
+      category_name: "Root",
+      slug: "root",
+      org_id: req.user.org_id,
+    });
+
+    if (rootCategory) {
+      return res.status(400).send({
+        status: 400,
+        message: "Root all ready Created",
+      });
+    }
+
+    const category = await Category.create({
+      category_name: "Root",
+      slug: "root",
+      parent_id: null,
+      sort: 1,
+      status: "Active",
+      icon: null,
+      org_id: req.user.org_id,
+    });
+
+    return res.send({
+      status: 200,
+      message: "Created Successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

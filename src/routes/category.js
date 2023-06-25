@@ -16,4 +16,6 @@ router.patch('/', categoryController.update);
 
 router.delete("/", myCategories, categoryController.delete);
 
+router.post("/create-root-catergory",  categoryController.createRootCategory);
+
 module.exports = router

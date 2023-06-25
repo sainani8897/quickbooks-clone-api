@@ -1,9 +1,11 @@
-const SalesOder = require("../database/Models/SalesOrder");
 const PointOfSale = require("../database/Models/PointOfSale");
 const Product = require("../database/Models/Product");
 const { NotFoundException, ValidationException } = require("../exceptions");
 const { pluck } = require("../helpers/helperFunctions");
 const SalesItemsHistory = require("../database/Models/SalesItemsHistory");
+const SalesOrder = require("../database/Models/SalesOrder");
+const Invoice = require("../database/Models/Invoice");
+const Payment = require("../database/Models/Payment");
 
 exports.index = async function (req, res, next) {
   try {
@@ -24,7 +26,6 @@ exports.index = async function (req, res, next) {
     }
     /** Filters added */
     if (req.query?.search && req.query?.search != "") {
-      
       options.populate[1] = {
         path: "customer_id",
         match: {
@@ -51,7 +52,7 @@ exports.index = async function (req, res, next) {
         { status: { $regex: req.query.search } },
       ];
 
-      query.customer_id = { $ne: null } ;
+      query.customer_id = { $ne: null };
     }
 
     if (req.query?.status && Array.isArray(req.query?.status)) {
@@ -87,7 +88,16 @@ exports.create = async function (req, res, next) {
   try {
     /** Basic Form */
     const payload = req.body.payload;
-    //  console.log(req.body.payload);
+    const order_no = Date.now() + Math.random(1111, 9999);
+    const total = payload?.sale_details?.total ?? null; 
+
+    if(isNaN(total) || total <=0){
+      return res.status(400).send({
+        status: 400,
+        message: "Something wrong with Sale!",
+      });
+    }
+
     const items = await Product.find({
       _id: { $in: pluck(payload?.items, "product_id") },
     });
@@ -101,8 +111,6 @@ exports.create = async function (req, res, next) {
         if (!prod) {
           throw new ValidationException(`Product not found!`);
         }
-
-        console.log("this is prod==", prod);
         if (prod.qty < value.qty) {
           throw new ValidationException(
             `The Selected ${prod.name} is Out of stock`
@@ -115,7 +123,24 @@ exports.create = async function (req, res, next) {
     }
 
     const order = await PointOfSale.create({
-      order_no: payload.order_no,
+      order_no: order_no,
+      sale_date: payload.sale_date,
+      shipment_date: payload.shipment_date,
+      customer: payload.customer_id,
+      sales_executives: payload.sales_executives,
+      items: payload.items,
+      sale_details: payload.sale_details,
+      customer_comments: payload.customer_comments,
+      status: payload.status,
+      created_by: req.user._id,
+      org_id: req.user.org_id,
+      reference: payload.reference,
+      shipping_notes: payload.shipping_notes,
+      customer_notes: payload.notes,
+    });
+
+    const salesOrder = await SalesOrder.create({
+      order_no: order_no,
       sale_date: payload.sale_date,
       shipment_date: payload.shipment_date,
       customer_id: payload.customer_id,
@@ -129,6 +154,8 @@ exports.create = async function (req, res, next) {
       reference: payload.reference,
       shipping_notes: payload.shipping_notes,
       customer_notes: payload.notes,
+      source_type: "POS",
+      pos: order._id,
     });
 
     if (saleItems.length > 0) {
@@ -139,7 +166,7 @@ exports.create = async function (req, res, next) {
 
     if (payload?.items.length > 0) {
       payload?.items.forEach(async (item, key) => {
-        item.sales_order = order._id;
+        item.sales_order = salesOrder._id;
         item.created_by = req.user._id;
         item.org_id = req.user.org_id;
         const saleItemHistory = await SalesItemsHistory.create(item);
@@ -155,9 +182,52 @@ exports.create = async function (req, res, next) {
       (await order).save();
     }
 
+    // Generating the Invoice
+    const invoice = await Invoice.create({
+      order_no: order_no,
+      invoice_no: "INV"+Date.now(),
+      invoice_date: payload.invoice_date,
+      shipment_date: payload.shipment_date,
+      customer_id: payload.customer_id,
+      sales_executives: payload.sales_executives,
+      items: payload.items,
+      sales_order: salesOrder._id,
+      sale_details: payload.sale_details,
+      customer_comments: payload.customer_comments,
+      status: "Completed",
+      payment: "Paid",
+      created_by: req.user._id,
+      org_id: req.user.org_id,
+    });
+
+    //Creating Payment History
+    const payment = await Payment.create({
+      payment_no: "PAY"+Date.now(),
+      payment_date: payload.payment_date,
+      invoice: invoice._id,
+      customer: payload.customer_id,
+      amount: total,
+      remaining_due: 0,
+      payment_mode: payload.payment_mode ?? null,
+      payment_type: "full_amount",
+      deposit_to: payload.deposit_to ?? null,
+      status: "Completed",
+      created_by: req.user._id,
+      org_id: req.user.org_id,
+      reference: payload.reference,
+      payable: invoice._id,
+      onModel: "Invoice",
+    });
+
     return res.send({
       status: 200,
       message: "Created Successfully",
+      data:{
+        order,
+        invoice,
+        payment,
+        sales_order:salesOrder
+      }
     });
   } catch (error) {
     next(error);
