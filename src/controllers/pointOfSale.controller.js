@@ -6,6 +6,7 @@ const SalesItemsHistory = require("../database/Models/SalesItemsHistory");
 const SalesOrder = require("../database/Models/SalesOrder");
 const Invoice = require("../database/Models/Invoice");
 const Payment = require("../database/Models/Payment");
+const Customer = require('../database/Models/Customer');
 
 exports.index = async function (req, res, next) {
   try {
@@ -219,6 +220,12 @@ exports.create = async function (req, res, next) {
       onModel: "Invoice",
     });
 
+    const customer = await Customer.findOne({
+      _id:payload.customer_id
+    })
+
+    invoice.customer = customer
+
     return res.send({
       status: 200,
       message: "Created Successfully",
@@ -226,6 +233,7 @@ exports.create = async function (req, res, next) {
         order,
         invoice,
         payment,
+        customer,
         sales_order:salesOrder
       }
     });
