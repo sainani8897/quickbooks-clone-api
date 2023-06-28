@@ -15,7 +15,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ["created_by", "customer_id", "sales_executives", "docs"],
+      populate: ["created_by", "customer", "sales_executives", "docs"],
     };
 
     const query = req.query;
@@ -28,7 +28,7 @@ exports.index = async function (req, res, next) {
     /** Filters added */
     if (req.query?.search && req.query?.search != "") {
       options.populate[1] = {
-        path: "customer_id",
+        path: "customer",
         match: {
           // $or: [
           //   { name: { $regex: req.query.search } },
@@ -49,7 +49,7 @@ exports.index = async function (req, res, next) {
 
       query.$or = [
         { order_no: { $regex: req.query.search } },
-        { "customer_id.name": { $regex: req.query.search } },
+        { "customer.name": { $regex: req.query.search } },
         { status: { $regex: req.query.search } },
       ];
 
