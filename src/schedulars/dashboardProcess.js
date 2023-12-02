@@ -2,7 +2,9 @@ const Queue = require("bull");
 const dashboardController = require("../controllers/dashboard.controller");
 const { Organization } = require("../database/Models");
 const Dashbord = require("../database/Models/Dashboard");
-const scheduledQueue = new Queue("scheduled jobs");
+const scheduledQueue = new Queue("scheduled jobs", {
+  redis: { host: process.env.REDIS_HOST, port: process.env.REDIS_PORT }
+});
 
 const dashboardProcess = async () => {
   return new Promise((resolve, reject) => {

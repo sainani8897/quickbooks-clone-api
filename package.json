@@ -22,6 +22,7 @@
     "mongoose": "^6.0.14",
     "mongoose-paginate-v2": "^1.7.0",
     "multer": "^1.4.5-lts.1",
+    "redis": "^4.6.11",
     "validatorjs": "^3.22.1"
   },
   "devDependencies": {
