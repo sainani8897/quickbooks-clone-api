@@ -1,0 +1,35 @@
+version: '3'
+
+# Services
+services:
+
+  mongo:
+    image: mongo
+    restart: on-failure
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb-data:/data/db
+
+  redis:
+    image: redis
+    restart: on-failure
+    ports:
+      - "6379:6379"
+
+  api:
+    image: wiki/apis
+    hostname: api
+    restart: on-failure
+    build: ./
+    depends_on:
+      - mongo
+    links:
+     - redis:redis
+    ports:
+      - "4040:4040"
+  
+
+
+volumes:
+  mongodb-data:
