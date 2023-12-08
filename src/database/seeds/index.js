@@ -1,7 +1,7 @@
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const { connectDb } = require("../../config/database");
-const { Permission, Role, Organization } = require("../Models");
+const { Permission, Role, Organization, Category } = require("../Models");
 
 const seedUser = {
   name: "Admin",
@@ -231,6 +231,17 @@ const permissionSeeder = async () => {
     user.roles = [superAdmin._id];
     user.org_id = org._id;
     await user.save();
+
+    const category = await Category.create({
+      category_name: 'Root',
+      slug: 'root',
+      parent_id: null,
+      sort: 1,
+      status: 'Active',
+      icon: null,
+      org_id: org.id,
+    });
+
   }
 
   return true;
