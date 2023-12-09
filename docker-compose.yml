@@ -18,7 +18,7 @@ services:
       - "6379:6379"
 
   api:
-    image: wiki/apis
+    image: invcontrol/apis
     hostname: api
     restart: on-failure
     build: ./
