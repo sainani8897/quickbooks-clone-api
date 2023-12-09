@@ -10,6 +10,7 @@ const Permission = require("./Permission");
 const Role = require("./Role");
 const Vendor = require("./Vendor");
 const Organization = require("./Organization");
+const Category = require('./Category');
 
 const models = {
   User,
@@ -23,6 +24,7 @@ const models = {
   Role,
   Vendor,
   Organization,
+  Category
 };
 
 module.exports = models;
